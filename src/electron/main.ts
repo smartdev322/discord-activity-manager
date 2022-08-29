@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
+import { ActivityManager } from "./discord/ActivityManager";
 import * as path from "path";
+import electronIsDev = require('electron-is-dev');
+const Activity = new ActivityManager();
 
 function createWindow() {
   // Create the browser window.
@@ -7,16 +10,28 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
+      devTools: electronIsDev ? true : false
     },
     width: 800,
   });
 
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+
+  electronIsDev ? mainWindow.loadURL(`http://localhost:3000`) : mainWindow.loadFile(`${path.join(__dirname, "../build/index.html")}`);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (electronIsDev) mainWindow.webContents.openDevTools();
+  mainWindow.setMenu(null);
 }
+
+ipcMain.handle('pt:updateStatus', async (_): Promise<void> => {
+  Activity.createActivity();
+});
+
+ipcMain.handle('pt:disconnect', async (_): Promise<void> => {
+  Activity.disconnect();
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
