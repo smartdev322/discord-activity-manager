@@ -1,3 +1,9 @@
+# Next.js cache and builds
+.next
+
+# Installed npm packages
 node_modules
+
+# Locally compiled modules
 dist
 build
