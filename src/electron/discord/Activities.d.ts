@@ -1,11 +1,12 @@
-export namespace Activity {
-  interface Struct {
+export namespace Activities {
+  interface Activity {
     applicationId: string;
     name?: string;
     state?: string;
     details?: string;
     timestamp?: ActivityTimestamps;
     assets?: ActivityAssets;
+    party?: ActivityParty;
   }
 
   interface ActivityTimestamps {
@@ -14,9 +15,19 @@ export namespace Activity {
   }
 
   interface ActivityAssets {
-    largeImage?: string,
+    largeImageKey?: string,
     largeImateText?: string,
-    smallImage?: string,
+    smallImageKey?: string,
     smallImageText?: string
+  }
+  
+  interface ActivityParty {
+    id: string,
+    size: PartySize
+  }
+
+  interface PartySize {
+    currentSize: number,
+    maxSize: number
   }
 }

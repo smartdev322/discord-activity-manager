@@ -1,4 +1,5 @@
 // All of the Node.js APIs are available in the preload process.
+import { Activities } from "./discord/Activities";
 import { contextBridge, ipcRenderer } from "electron";
 
 // It has the same sandbox as a Chrome extension.
@@ -7,8 +8,8 @@ import { contextBridge, ipcRenderer } from "electron";
 
 // The IPC needed to allow the React renderer to use Node process commands
 contextBridge.exposeInMainWorld('activityManager', {
-  updateStatus: async (): Promise<void> => {
-    ipcRenderer.invoke('pt:updateStatus');
+  updateStatus: async (activity: Activities.Activity): Promise<number> => {
+    return (await ipcRenderer.invoke('pt:updateStatus', activity));
   },
   disconnect: async (): Promise<void> => {
     ipcRenderer.invoke('pt:disconnect');

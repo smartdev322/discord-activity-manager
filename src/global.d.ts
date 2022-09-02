@@ -1,7 +1,7 @@
 declare global {
   interface Window {
     activityManager: {
-      updateStatus: () => Promise<void>;
+      updateStatus: (activity: any) => Promise<number>;
       disconnect: () => Promise<void>;
     };
   }

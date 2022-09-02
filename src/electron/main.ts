@@ -2,18 +2,22 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import { ActivityManager } from "./discord/ActivityManager";
 import * as path from "path";
 import electronIsDev = require('electron-is-dev');
+import { Activities } from "./discord/Activities";
 const Activity = new ActivityManager();
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
+    show: false,
+    height: 475,
+    width: 500,
+    minHeight: 475,
+    minWidth: 500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
       devTools: electronIsDev ? true : false
-    },
-    width: 800,
+    }
   });
 
   // and load the index.html of the app.
@@ -23,10 +27,13 @@ function createWindow() {
   // Open the DevTools.
   if (electronIsDev) mainWindow.webContents.openDevTools();
   mainWindow.setMenu(null);
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  })
 }
 
-ipcMain.handle('pt:updateStatus', async (_): Promise<void> => {
-  Activity.createActivity();
+ipcMain.handle('pt:updateStatus', async (_, activity: Activities.Activity): Promise<number> => {
+  return (Activity.activityLauncher(activity));
 });
 
 ipcMain.handle('pt:disconnect', async (_): Promise<void> => {

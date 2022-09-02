@@ -1,15 +1,19 @@
-import { Activity } from './Activity';
+import { Activities } from './Activities';
 import { DateTime } from 'luxon';
 
 export class ActivityValidation {
-  public static validActivity(activity: Activity.Struct): boolean {
+  public static validActivity(activity: Activities.Activity): boolean {
+    const errors = [];
     this.validApplicationId(activity.applicationId);
 
-    if (activity.state) this.validUserString(activity.state);
-    if (activity.details) this.validUserString(activity.details);
+    if (activity.state) errors.push(this.validUserString(activity.state));
+    if (activity.details) errors.push(this.validUserString(activity.details));
+    if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
 
-
-    return (false);
+    errors.forEach((check) => {
+      if (check !== true) return (false)
+    })
+    return (true);
   }
 
   /**
@@ -18,7 +22,7 @@ export class ActivityValidation {
    * @returns Whether the application ID is a string
    */
   private static validApplicationId(appId: any): boolean {
-    if (typeof (appId) === 'string') return (true);
+    if (typeof (appId) === 'string' && appId.length > 0) return (true);
     return (false);
   }
 
@@ -39,8 +43,10 @@ export class ActivityValidation {
    * @returns 
    */
   private static validDate(date: any): boolean {
-    let testDate = DateTime.fromObject(date);
-    return (testDate.isValid);
+    if (!date.start && !date.end) return (false);
+    const testDate = date.end || date.start;
+    
+    return (DateTime.fromMillis(testDate).isValid);
   }
 }
 

@@ -1,6 +1,8 @@
 // This is the child process that manages the Discord Rich Presence
 
 import { Client } from 'discord-rpc';
+import { argv } from 'node:process';
+import { Activities } from './Activities';
 
 // Forces the application to be forked from a parent node process
 if (process.send === undefined) {
@@ -8,15 +10,21 @@ if (process.send === undefined) {
   process.exit(1);
 }
 
+if (process.argv.length < 2){
+  console.error('Missing arguments');
+}
+
 // DEBUG: Displays information about both the child and parent process IDs
 //console.log(`Child process (${process.pid}) created successfully under parent (${process.ppid})`);
 
 // Sets the user's current activity
-const applicationId = '';
+const activity: Activities.Activity = JSON.parse(argv[2]);
+const clientId = activity.applicationId;
+
 const client = new Client({ transport: 'ipc' });
 
 client.on('ready', () => {
-  updateActivity();
+  updateActivity(activity);
 })
 client.on('disconnect', () => {
   client.clearActivity();
@@ -24,18 +32,23 @@ client.on('disconnect', () => {
   process.exit(0);
 })
 
-client.login({ clientId: applicationId }).catch((err: Error) => { process.send(err) })
+client.login({ clientId }).catch((err: Error) => { process.send(err) })
 process.on('error', (err) => { console.error(err) })
-process.on('message', () => { updateActivity() })
+process.on('message', (activity: any) => { updateActivity(JSON.parse(activity)) })
 process.on('exit', () => {
   if (client) client.destroy();
 });
 process.on('disconnect', () => {
-  client.clearActivity();
-  client.destroy();
+  if (client) {
+    client.clearActivity();
+    client.destroy();
+  }
   process.exit(0);
 });
 
-function updateActivity() {
-  client.setActivity({});
+function updateActivity(activity: any) {
+  client.setActivity({
+    largeImageKey: activity.largeImageKey,
+    instance: false
+  });
 }
