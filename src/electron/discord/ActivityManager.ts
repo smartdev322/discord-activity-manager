@@ -5,14 +5,10 @@ import { Activities } from './Activities';
 import { ActivityValidation } from './ActivityValidation';
 
 export class ActivityManager {
-  private activity: Activities.Activity;
   private activityProcess: ChildProcess | null;
   private userUpdates: number;
 
   constructor() {
-    this.activity = {
-      applicationId: ''
-    };
     this.activityProcess = null;
     this.userUpdates = 0;
   }
@@ -34,6 +30,8 @@ export class ActivityManager {
       console.log('Too many consecutive requests made in the last 20 seconds');
       return (105);
     }
+
+    console.log(activity);
 
     await this.createActivity(activity);
 

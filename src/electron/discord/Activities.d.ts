@@ -16,7 +16,7 @@ export namespace Activities {
 
   interface ActivityAssets {
     largeImageKey?: string,
-    largeImateText?: string,
+    largeImageText?: string,
     smallImageKey?: string,
     smallImageText?: string
   }

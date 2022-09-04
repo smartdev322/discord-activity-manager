@@ -9,9 +9,9 @@ function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     show: false,
-    height: 475,
+    height: 550,
     width: 500,
-    minHeight: 475,
+    minHeight: 550,
     minWidth: 500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -22,7 +22,7 @@ function createWindow() {
 
   // and load the index.html of the app.
 
-  electronIsDev ? mainWindow.loadURL(`http://localhost:3000`) : mainWindow.loadFile(`${path.join(__dirname, "../build/index.html")}`);
+  electronIsDev ? mainWindow.loadURL(`http://localhost:3000`) : mainWindow.loadFile(`${path.join(__dirname, "../out/index.html")}`);
 
   // Open the DevTools.
   if (electronIsDev) mainWindow.webContents.openDevTools();
@@ -32,10 +32,12 @@ function createWindow() {
   })
 }
 
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 ipcMain.handle('pt:updateStatus', async (_, activity: Activities.Activity): Promise<number> => {
   return (Activity.activityLauncher(activity));
 });
 
+/* eslint-disable  @typescript-eslint/no-unused-vars */
 ipcMain.handle('pt:disconnect', async (_): Promise<void> => {
   Activity.disconnect();
 })

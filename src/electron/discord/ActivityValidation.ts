@@ -38,7 +38,7 @@ export class ActivityValidation {
   }
 
   /**
-   * 
+   * Uses the Luxon isValid function to check if the date provided is valid
    * @param date 
    * @returns 
    */
@@ -49,4 +49,3 @@ export class ActivityValidation {
     return (DateTime.fromMillis(testDate).isValid);
   }
 }
-

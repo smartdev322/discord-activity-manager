@@ -2,10 +2,12 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "tailwindcss"
   ],
   "extends": [
     "eslint:recommended",
+    "plugin:tailwindcss/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ]

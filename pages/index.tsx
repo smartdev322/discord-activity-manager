@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 
 function App() {
-  const firstLoad = useRef(0);
+  const firstLoad = useRef(true);
   const [isLive, setIsLive] = useState(false);
   const [processFailed, setProcessFailed] = useState(false);
   const [discordStatus, setDiscordStatus] = useState(0);
@@ -22,7 +22,7 @@ function App() {
     setProcessFailed(false);
     setDiscordStatus(0);
   }
-  
+
   const resetData = () => {
     setIsLive(false);
     setProcessFailed(false);
@@ -52,6 +52,7 @@ function App() {
       applicationId: applicationId,
       state: state,
       details: details,
+      assets: {largeImageKey, largeImageText},
       timestamp: activityTimestamp()
     }
     reset();
@@ -81,18 +82,18 @@ function App() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
-      firstLoad.current === 0 ? firstLoad.current = 1 : localStorage.setItem('darkMode', 'true');
+      firstLoad.current === true ? firstLoad.current = false : localStorage.setItem('darkMode', 'true');
     }
     else {
       document.documentElement.classList.remove('dark');
-      firstLoad.current === 0 ? firstLoad.current = 1 : localStorage.setItem('darkMode', 'false');
+      firstLoad.current === true ? firstLoad.current = false : localStorage.setItem('darkMode', 'false');
     }
   }, [darkMode])
 
   const Status = () => {
     let text = '';
     if (processFailed) {
-      switch(discordStatus){
+      switch (discordStatus) {
         case 101:
           text = 'Active Process'
           break;
