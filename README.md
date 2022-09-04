@@ -1,53 +1,10 @@
-# electron-quick-start-typescript
+# Project Turf
 
-**Clone and run for a quick way to see Electron in action.**
+A cross-platform electron application that allows users to modify their Discord game activity. This is a more modern take using modern web development frameworks like Next.js/React/Tailwindcss and Electron as a successor to my previous project, SwitchRP (which used raw HTML/Bootstrap). The reason I made this again is because I wanted an easy solution to share what I'm currently doing on my Nintendo Switch (because it still doesn't have native Discord integration).
 
-This is a [TypeScript](https://www.typescriptlang.org) port of the [Electron Quick Start repo](https://github.com/electron/electron-quick-start) -- a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start) within the Electron documentation.
+# Heads up
+This project is in the early stages and has a sizeable amount of problems &ndash; namely the customization features. A distributable executable will not be provided until the app is in a much better state.
 
-**Use this app along with the [Electron API Demos](http://electron.atom.io/#get-started) app for API code examples to help you get started.**
-
-A basic Electron application needs just these files:
-
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.ts` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
-
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start).
-
-## To Use
-
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start-typescript
-# Go into the repository
-cd electron-quick-start-typescript
-# Install dependencies
-npm install
-# Run the app
-npm start
-```
-
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
-## Re-compile automatically
-
-To recompile automatically and to allow using [electron-reload](https://github.com/yan-foto/electron-reload), run this in a separate terminal:
-
-```bash
-npm run watch
-```
-
-## Resources for Learning Electron
-
-- [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
-- [Electron Fiddle](https://electronjs.org/fiddle) - create, play, and share small Electron experiments
-- [electronjs.org/community#boilerplates](https://electronjs.org/community#boilerplates) - sample starter apps created by the community
-- [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
-- [electron/simple-samples](https://github.com/electron/simple-samples) - small applications with ideas for taking them further
-- [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
-
-## License
-
-[CC0 1.0 (Public Domain)](LICENSE.md)
+# Running the Source Code
+`npm run dev`
+> Runs the Electron application with a local React server. This runs the local Next.js server at `http://localhost:3000` so you can edit the frontend code and have it instantly reflected on the device.
