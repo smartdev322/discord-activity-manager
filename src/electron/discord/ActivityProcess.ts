@@ -46,9 +46,6 @@ process.on('disconnect', () => {
   process.exit(0);
 });
 
-function updateActivity(activity: any) {
-  client.setActivity({
-    largeImageKey: activity.largeImageKey,
-    instance: false
-  });
+function updateActivity(activity: Activities.Activity) {
+  client.setActivity(activity);
 }

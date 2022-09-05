@@ -3,6 +3,7 @@
 import { ChildProcess, fork } from 'node:child_process';
 import { Activities } from './Activities';
 import { ActivityValidation } from './ActivityValidation';
+import { prune } from './ActivityPruner';
 
 export class ActivityManager {
   private activityProcess: ChildProcess | null;
@@ -31,24 +32,34 @@ export class ActivityManager {
       return (105);
     }
 
-    console.log(activity);
-
-    await this.createActivity(activity);
+    await this.createActivity(prune(activity));
 
     if (this.activityProcess) {
-      this.activityProcess.on('exit', (code: number) => { console.log(`Process ended with code ${code}`) });
+      this.activityProcess.on('exit', (code: number) => { console.log(`Process exited with code ${code}`) });
       this.activityProcess.on('message', (msg: string | Activities.Activity) => { console.log(msg) });
       this.activityProcess.on('error', (err: Error) => { console.error(err) });
     }
+
     return (0);
   }
 
   public async updateActivity(activity: Activities.Activity): Promise<number> {
     if (!this.activityProcess) {
       console.error('The process has not been launched.');
-      this.activityLauncher(activity);
+      const validData: boolean = ActivityValidation.validActivity(activity);
+      if (!validData) {
+        console.log("The provided activity contains missing or invalid data");
+        return (103);
+      }
+      this.activityLauncher(prune(activity));
     }
 
+    const validData: boolean = ActivityValidation.validActivity(activity);
+    if (!validData) {
+      console.log("The provided activity contains missing or invalid data");
+      return (103);
+    }
+    this.activityProcess.send(JSON.stringify(prune(activity)));
     this.userUpdates++;
     return (0);
   }

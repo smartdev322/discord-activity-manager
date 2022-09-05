@@ -8,6 +8,10 @@ import { contextBridge, ipcRenderer } from "electron";
 
 // The IPC needed to allow the React renderer to use Node process commands
 contextBridge.exposeInMainWorld('activityManager', {
+  
+  broadcastStatus: async (activity: Activities.Activity): Promise<number> => {
+    return (await ipcRenderer.invoke('pt:broadcastStatus', activity));
+  },
   updateStatus: async (activity: Activities.Activity): Promise<number> => {
     return (await ipcRenderer.invoke('pt:updateStatus', activity));
   },

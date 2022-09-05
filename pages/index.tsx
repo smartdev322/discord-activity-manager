@@ -8,6 +8,7 @@ function App() {
 
   const [darkMode, setDarkMode] = useState(false);
 
+  // Variables found in the Activity struct
   const [name, setName] = useState('');
   const [applicationId, setApplicationId] = useState('');
   const [details, setDetails] = useState('');
@@ -16,6 +17,10 @@ function App() {
   const [timestampStart, setTimestampStart] = useState(true);
   const [largeImageKey, setLargeImageKey] = useState('');
   const [largeImageText, setLargeImageText] = useState('');
+  const [smallImageKey, setSmallImageKey] = useState('');
+  const [smallImageText, setSmallImageText] = useState('');
+  const [partySize, setPartySize] = useState(0);
+  const [partyMax, setPartyMax] = useState(0);
 
   const reset = () => {
     setIsLive(false);
@@ -24,9 +29,7 @@ function App() {
   }
 
   const resetData = () => {
-    setIsLive(false);
-    setProcessFailed(false);
-    setDiscordStatus(0);
+    reset();
 
     setName('');
     setApplicationId('');
@@ -48,16 +51,49 @@ function App() {
         end: new Date(timestamp).getTime()
       });
     }
+
     const activity = {
       applicationId: applicationId,
       state: state,
       details: details,
-      assets: {largeImageKey, largeImageText},
-      timestamp: activityTimestamp()
+      //timestamp: activityTimestamp(),
+      largeImageKey: largeImageKey,
+      largeImageText: largeImageText,
+      smallImageKey: smallImageKey,
+      smallImageText: smallImageText,
+      //party: [partySize, partyMax]
     }
+
     reset();
     setIsLive(true);
-    setDiscordStatus(await window.activityManager.updateStatus(activity));
+    setDiscordStatus(await window.activityManager.broadcastStatus(activity));
+  }
+
+  const updateStatus = async () => {
+    const activityTimestamp = () => {
+      if (timestampStart) {
+        return ({
+          start: Date.now()
+        })
+      }
+      return ({
+        end: new Date(timestamp).getTime()
+      });
+    }
+
+    const activity = {
+      applicationId: applicationId,
+      state: state,
+      details: details,
+      //timestamp: activityTimestamp(),
+      largeImageKey: largeImageKey,
+      largeImageText: largeImageText,
+      smallImageKey: smallImageKey,
+      smallImageText: smallImageText,
+      //party: [partySize, partyMax]
+    }
+
+    await window.activityManager.updateStatus(activity);
   }
 
   const disconnect = async (): Promise<void> => {
@@ -94,6 +130,9 @@ function App() {
     let text = '';
     if (processFailed) {
       switch (discordStatus) {
+        case 100:
+          text = 'Child Process terminated'
+          break;
         case 101:
           text = 'Active Process'
           break;
@@ -108,7 +147,7 @@ function App() {
       }
       return (
         <div className='bg-rose-500 py-2 w-full font-medium text-white flex px-4'>
-          <span className='flex'>{applicationId ? `appID: ${applicationId}` : 'Application ID not configured'}</span>
+          <span className='flex'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
           <span className='flex grow' />
           <span className='flex'>Error: {text} ({discordStatus})</span>
         </div>
@@ -117,7 +156,7 @@ function App() {
     if (isLive) {
       return (
         <div className='bg-green-500 py-2 w-full font-medium text-white flex px-4'>
-          <span className='flex'>{applicationId ? `appID: ${applicationId}` : 'Application ID not configured'}</span>
+          <span className='flex'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
           <span className='flex grow' />
           <span className='flex'>Connected</span>
         </div>
@@ -126,7 +165,7 @@ function App() {
 
     return (
       <div className='bg-gradient-to-r from-sky-500 to-indigo-500 py-2 w-full font-medium text-white flex px-4'>
-        <span className='flex'>{applicationId ? `appID: ${applicationId}` : 'Application ID not configured'}</span>
+        <span className='flex'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
         <span className='flex grow' />
         <span className='flex'>Ready</span>
       </div>
@@ -160,7 +199,6 @@ function App() {
               <label htmlFor='largeImageText'>Large Image Text</label>
               <input type='text' id='largeImageText' name='largeImageText' className='' placeholder='Large Image Text' value={largeImageText} onChange={(e) => { setLargeImageText(e.target.value) }} />
             </span>
-
           </div>
         </form>
 
@@ -169,8 +207,12 @@ function App() {
         <div id="operationControl" className='flex flex-row space-x-10'>
           <button id='darkMode' className='p-2 bg-slate-50' onClick={() => setDarkMode(!darkMode)}>DARK MODE</button>
           <span className='grow' />
-          <button id='reset' className='bg-slate-400 p-2' onClick={resetData}>RESET</button>
-          {isLive ? <button id='disconnect' className='bg-rose-500 p-2' onClick={disconnect}>DISCONNECT</button> : <button id='broadcast' className='p-2 bg-teal-300' onClick={broadcast}>BROADCAST</button>}
+
+          {/* RESET/DISCONNECT */}
+          {isLive ? <button id='disconnect' className='bg-rose-500 p-2' onClick={disconnect}>DISCONNECT</button> : <button id='reset' className='bg-slate-400 p-2' onClick={resetData}>RESET</button>}
+
+          {/* BROADCAST/UPDATE */}
+          {isLive ? <button id='update' className='bg-teal-500 p-2' onClick={updateStatus}>UPDATE</button> : <button id='broadcast' className='p-2 bg-teal-300' onClick={broadcast}>BROADCAST</button>}
         </div>
       </div>
 

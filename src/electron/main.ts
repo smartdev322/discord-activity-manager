@@ -33,8 +33,13 @@ function createWindow() {
 }
 
 /* eslint-disable  @typescript-eslint/no-unused-vars */
-ipcMain.handle('pt:updateStatus', async (_, activity: Activities.Activity): Promise<number> => {
+ipcMain.handle('pt:broadcastStatus', async (_, activity: Activities.Activity): Promise<number> => {
   return (Activity.activityLauncher(activity));
+});
+
+/* eslint-disable  @typescript-eslint/no-unused-vars */
+ipcMain.handle('pt:updateStatus',  async (_, activity: Activities.Activity): Promise<number> => {
+  return (Activity.updateActivity(activity));
 });
 
 /* eslint-disable  @typescript-eslint/no-unused-vars */

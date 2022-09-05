@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 export class ActivityValidation {
   public static validActivity(activity: Activities.Activity): boolean {
     const errors = [];
+    let valid = true;
     this.validApplicationId(activity.applicationId);
 
     if (activity.state) errors.push(this.validUserString(activity.state));
@@ -11,9 +12,10 @@ export class ActivityValidation {
     if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
 
     errors.forEach((check) => {
-      if (check !== true) return (false)
+      if (check !== true) valid = false;
     })
-    return (true);
+    
+    return (valid);
   }
 
   /**
@@ -21,7 +23,7 @@ export class ActivityValidation {
    * @param appId A value that is supposed to represent the Discord Application ID
    * @returns Whether the application ID is a string
    */
-  private static validApplicationId(appId: any): boolean {
+  private static validApplicationId(appId: unknown): boolean {
     if (typeof (appId) === 'string' && appId.length > 0) return (true);
     return (false);
   }
@@ -31,7 +33,7 @@ export class ActivityValidation {
    * @param userString The user input
    * @returns Whether the user string is valid
    */
-  private static validUserString(userString: any): boolean {
+  private static validUserString(userString: unknown): boolean {
     if (typeof (userString) !== 'string') return (false);
     if (userString.length > 128) return (false);
     return (true);
