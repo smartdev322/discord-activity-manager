@@ -1,5 +1,5 @@
 export namespace Activities {
-  interface Activity {
+  export interface Activity {
     applicationId: string;
     name?: string;
     state?: string;
