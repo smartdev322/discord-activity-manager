@@ -5,7 +5,7 @@ export class ActivityValidation {
   public static validActivity(activity: Activities.Activity): boolean {
     const errors = [];
     let valid = true;
-    this.validApplicationId(activity.applicationId);
+    if (!this.validApplicationId(activity.applicationId)) return (false);
 
     if (activity.state) errors.push(this.validUserString(activity.state));
     if (activity.details) errors.push(this.validUserString(activity.details));

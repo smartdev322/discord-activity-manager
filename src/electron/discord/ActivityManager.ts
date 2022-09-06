@@ -8,10 +8,12 @@ import { prune } from './ActivityPruner';
 export class ActivityManager {
   private activityProcess: ChildProcess | null;
   private userUpdates: number;
+  private updateTimeout: NodeJS.Timeout | null;
 
   constructor() {
     this.activityProcess = null;
     this.userUpdates = 0;
+    this.updateTimeout = null;
   }
 
   public async activityLauncher(activity: Activities.Activity): Promise<number> {
@@ -40,33 +42,40 @@ export class ActivityManager {
       this.activityProcess.on('error', (err: Error) => { console.error(err) });
     }
 
-    return (0);
+    return (new Promise(resolve => {
+      this.activityProcess.on('exit', (code: number) => { resolve(code) }) || resolve(0);
+    }));
   }
 
   public async updateActivity(activity: Activities.Activity): Promise<number> {
-    if (!this.activityProcess) {
-      console.error('The process has not been launched.');
-      const validData: boolean = ActivityValidation.validActivity(activity);
-      if (!validData) {
-        console.log("The provided activity contains missing or invalid data");
-        return (103);
-      }
-      this.activityLauncher(prune(activity));
-    }
-
     const validData: boolean = ActivityValidation.validActivity(activity);
     if (!validData) {
       console.log("The provided activity contains missing or invalid data");
       return (103);
     }
-    this.activityProcess.send(JSON.stringify(prune(activity)));
-    this.userUpdates++;
+
+    if (!this.activityProcess) {
+      console.error('The process has not been launched.');
+      this.activityLauncher(prune(activity));
+    }
+    else {
+      this.activityProcess.send(JSON.stringify(prune(activity)));
+    }
+
+    this.setUserUpdate();
     return (0);
   }
 
   // Creates a fork
   private async createActivity(activity: Activities.Activity): Promise<void> {
     this.activityProcess = fork('./dist/discord/ActivityProcess', [JSON.stringify(activity)]);
+    this.setUserUpdate();
+  }
+
+  private async setUserUpdate() {
+    if (!this.updateTimeout) {
+      this.updateTimeout = setTimeout(() => { this.userUpdates = 0 }, 20000);
+    }
     this.userUpdates++;
   }
 

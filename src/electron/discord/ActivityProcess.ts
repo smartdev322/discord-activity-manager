@@ -10,7 +10,7 @@ if (process.send === undefined) {
   process.exit(1);
 }
 
-if (process.argv.length < 2){
+if (process.argv.length < 2) {
   console.error('Missing arguments');
 }
 
@@ -25,15 +25,20 @@ const client = new Client({ transport: 'ipc' });
 
 client.on('ready', () => {
   updateActivity(activity);
-})
+});
 client.on('disconnect', () => {
   client.clearActivity();
   client.destroy();
   process.exit(0);
-})
+});
 
-client.login({ clientId }).catch((err: Error) => { process.send(err) })
-process.on('error', (err) => { console.error(err) })
+client.login({ clientId })
+  .catch((err: Error) => {
+    process.send({ error: err.stack }); 
+    if (err.message == 'connection closed') process.exit(4007);
+    process.exit(1000);
+  });
+
 process.on('message', (activity: any) => { updateActivity(JSON.parse(activity)) })
 process.on('exit', () => {
   if (client) client.destroy();
@@ -47,5 +52,8 @@ process.on('disconnect', () => {
 });
 
 function updateActivity(activity: Activities.Activity) {
-  client.setActivity(activity);
+  client.setActivity(activity).catch((err) => {
+    //console.error(err.message);
+    process.exit(err.code);
+  });
 }
