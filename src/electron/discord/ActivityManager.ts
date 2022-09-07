@@ -17,7 +17,9 @@ export class ActivityManager {
   }
 
   public async activityLauncher(activity: Activities.Activity): Promise<number> {
-    // Stop if an activity is already active
+
+    /* Early checks to prevent issues later on */
+    // Stop if we already have an activity bring broadcasted
     if (this.activityProcess && this.activityProcess.exitCode === null) {
       console.log(`Activity process (${this.activityProcess.pid}) is still active and a new one will not be created until it is closed.`);
       return (101);
@@ -73,7 +75,8 @@ export class ActivityManager {
   }
 
   private async setUserUpdate() {
-    if (!this.updateTimeout) {
+    console.log(this.userUpdates);
+    if (!this.userUpdates) {
       this.updateTimeout = setTimeout(() => { this.userUpdates = 0 }, 20000);
     }
     this.userUpdates++;

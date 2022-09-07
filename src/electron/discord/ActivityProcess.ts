@@ -1,4 +1,6 @@
-// This is the child process that manages the Discord Rich Presence
+/** ActivityProcess.ts
+ * This is the child process that manages the Discord Rich Presence
+ */
 
 import { Client } from 'discord-rpc';
 import { argv } from 'node:process';
@@ -22,7 +24,11 @@ const activity: Activities.Activity = JSON.parse(argv[2]);
 const clientId = activity.applicationId;
 
 const client = new Client({ transport: 'ipc' });
-
+client.login({ clientId }).catch((err: Error) => {
+  process.send({ error: err.stack });
+  if (err.message == 'connection closed') process.exit(4007);
+  process.exit(1000);
+});
 client.on('ready', () => {
   updateActivity(activity);
 });
@@ -32,28 +38,20 @@ client.on('disconnect', () => {
   process.exit(0);
 });
 
-client.login({ clientId })
-  .catch((err: Error) => {
-    process.send({ error: err.stack }); 
-    if (err.message == 'connection closed') process.exit(4007);
-    process.exit(1000);
-  });
-
-process.on('message', (activity: any) => { updateActivity(JSON.parse(activity)) })
-process.on('exit', () => {
-  if (client) client.destroy();
-});
+process.on('message', (activity: string) => {
+  updateActivity(JSON.parse(activity));
+})
 process.on('disconnect', () => {
-  if (client) {
-    client.clearActivity();
-    client.destroy();
-  }
+  client.clearActivity();
+  client.destroy();
   process.exit(0);
+});
+process.on('exit', () => {
+  client.destroy();
 });
 
 function updateActivity(activity: Activities.Activity) {
   client.setActivity(activity).catch((err) => {
-    //console.error(err.message);
     process.exit(err.code);
   });
 }

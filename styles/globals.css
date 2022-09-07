@@ -3,19 +3,31 @@
 @tailwind utilities;
 
 @layer components {
-  .inputBorder{
+  .statusbar{
+    @apply px-4 py-2 text-white flex text-sm
+  }
+
+  .inputBorder {
     @apply bg-inherit border border-solid dark:outline-dark-300 dark:border-dark-300 outline-light-600 border-light-600 rounded-sm p-1
+  }
+
+  .interactiveBorder {
+    @apply bg-inherit border-none dark:outline-dark-300 dark:border-dark-300 outline-light-600 border-light-300
   }
 
   .discordTextActive{
     @apply dark:text-white text-light-900
   }
 
-  .statusbar{
-    @apply px-4 py-2 text-white flex text-sm
-  }
-
   .discordTextInteractive {
     @apply text-light-700 dark:text-dark-300 hover:bg-light-300 dark:hover:bg-dark-700
+  }
+
+  .tooltip {
+    @apply invisible absolute;
+  }
+
+  .has-tooltip:hover .tooltip{
+    @apply visible bg-white/75 dark:bg-black/75 backdrop-blur-md rounded-xl p-2 z-10;
   }
 }
