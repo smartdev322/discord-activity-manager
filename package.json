@@ -40,7 +40,7 @@
     ]
   },
   "dependencies": {
-    "@tabler/icons": "^1.92.0",
+    "@tabler/icons": "^1.93.0",
     "autoprefixer": "^10.4.8",
     "discord-rpc": "^4.0.1",
     "luxon": "^3.0.2",
@@ -48,6 +48,7 @@
     "postcss": "^8.4.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
     "tailwindcss": "^3.1.8"
   },
   "devDependencies": {
