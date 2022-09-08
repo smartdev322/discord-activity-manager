@@ -1,8 +1,8 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { ActivityManager } from "./discord/ActivityManager";
+import { Activities } from "./types/Activities/Activities";
 import * as path from "path";
 import electronIsDev = require('electron-is-dev');
-import { Activities } from "./discord/Activities";
 const Activity = new ActivityManager();
 
 function createWindow() {
@@ -10,9 +10,9 @@ function createWindow() {
   const mainWindow = new BrowserWindow({
     show: false,
     height: 550,
-    width: 500,
+    width: 550,
     minHeight: 550,
-    minWidth: 500,
+    minWidth: 550,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,

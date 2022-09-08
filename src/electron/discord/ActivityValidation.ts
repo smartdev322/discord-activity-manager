@@ -1,4 +1,4 @@
-import { Activities } from './Activities';
+import { Activities } from '../types/Activities/Activities';
 import { DateTime } from 'luxon';
 
 export class ActivityValidation {

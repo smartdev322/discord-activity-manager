@@ -1,7 +1,7 @@
 // This is the parent process responsible for creating and updating the child process
 
 import { ChildProcess, fork } from 'node:child_process';
-import { Activities } from './Activities';
+import { Activities } from '../types/Activities/Activities';
 import { ActivityValidation } from './ActivityValidation';
 import { prune } from './ActivityPruner';
 
@@ -50,6 +50,7 @@ export class ActivityManager {
   }
 
   public async updateActivity(activity: Activities.Activity): Promise<number> {
+    let exitCode: number | string = 0;
     const validData: boolean = ActivityValidation.validActivity(activity);
     if (!validData) {
       console.log("The provided activity contains missing or invalid data");
@@ -58,7 +59,7 @@ export class ActivityManager {
 
     if (!this.activityProcess) {
       console.error('The process has not been launched.');
-      this.activityLauncher(prune(activity));
+      exitCode = await this.activityLauncher(prune(activity));
     }
     else {
       this.activityProcess.send(JSON.stringify(prune(activity)));
@@ -74,8 +75,7 @@ export class ActivityManager {
     this.setUserUpdate();
   }
 
-  private async setUserUpdate() {
-    console.log(this.userUpdates);
+  private async setUserUpdate(): Promise<void> {
     if (!this.userUpdates) {
       this.updateTimeout = setTimeout(() => { this.userUpdates = 0 }, 20000);
     }

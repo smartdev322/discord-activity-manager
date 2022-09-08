@@ -2,9 +2,11 @@
  * This is the child process that manages the Discord Rich Presence
  */
 
-import { Client } from 'discord-rpc';
 import { argv } from 'node:process';
-import { Activities } from './Activities';
+import { Activities } from '../types/Activities/Activities';
+import { RPCClient as Client } from '../discord-rpc/discord-rpc';
+import { TransportRejection } from 'discord-rpc';
+
 
 // Forces the application to be forked from a parent node process
 if (process.send === undefined) {
@@ -24,12 +26,11 @@ const activity: Activities.Activity = JSON.parse(argv[2]);
 const clientId = activity.applicationId;
 
 const client = new Client({ transport: 'ipc' });
-client.login({ clientId }).catch((err: Error) => {
-  process.send({ error: err.stack });
-  if (err.message == 'connection closed') process.exit(4007);
-  process.exit(1000);
+client.login({ clientId }).catch((reject: TransportRejection) => {
+  if (reject.message === 'Error: could not connect') { process.exit(1000) }
+  process.exit(reject.code || 1000);
 });
-client.on('ready', () => {
+client.on('ready', (e) => {
   updateActivity(activity);
 });
 client.on('disconnect', () => {

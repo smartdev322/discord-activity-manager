@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
@@ -8,8 +8,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "outDir": "../../dist",
+    "typeRoots": ["../../types", "../../node_modules/@types"],
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["../../node_modules/*"]
     }
   },
   "include": [
