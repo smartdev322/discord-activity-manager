@@ -3,7 +3,7 @@
  */
 
 import { argv } from 'node:process';
-import { Activities } from '../types/Activities/Activities';
+import { Activities } from '../types/activities';
 import { RPCClient as Client } from '../discord-rpc/discord-rpc';
 import { TransportRejection } from 'discord-rpc';
 

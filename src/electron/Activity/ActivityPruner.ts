@@ -2,7 +2,7 @@
  * Prunes an Activity object so that it removes empty fields
  */
 
-import { Activities } from "../types/Activities/Activities";
+import { Activities } from "../types/activities";
 
 interface ActivityIndex extends Activities.Activity{
   [key: string]: string | number | Activities.ActivityAssets | Activities.ActivityTimestamps | Activities.ActivityParty;

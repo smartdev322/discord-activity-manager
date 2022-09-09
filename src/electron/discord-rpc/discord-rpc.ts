@@ -6,7 +6,7 @@ export class RPCClient extends Client {
     super(options);
   }
 
-  connect(clientId: string): Promise<Client> {
+  public connect(clientId: string): Promise<Client> {
     if (this._connectPromise) {
       return this._connectPromise;
     }

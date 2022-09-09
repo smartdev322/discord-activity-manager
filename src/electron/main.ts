@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import { ActivityManager } from "./discord/ActivityManager";
-import { Activities } from "./types/Activities/Activities";
+import { ActivityManager } from "./Activity/ActivityManager";
+import { Activities } from "./types/activities";
 import * as path from "path";
 import electronIsDev = require('electron-is-dev');
 const Activity = new ActivityManager();

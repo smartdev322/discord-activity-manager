@@ -1,5 +1,5 @@
 // All of the Node.js APIs are available in the preload process.
-import { Activities } from "./types/Activities/Activities";
+import { Activities } from "./types/activities";
 import { contextBridge, ipcRenderer } from "electron";
 
 // It has the same sandbox as a Chrome extension.
