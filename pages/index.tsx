@@ -1,7 +1,9 @@
-import { useEffect, useState, useRef, createRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Head from 'next/head';
-import { IconMoon, IconSun, IconBroadcast, IconBroadcastOff, IconEdit, IconEraser, IconFile, IconFileText, IconQuestionMark } from '@tabler/icons';
-import ErrorMsg from '../components/ErrorMsg';
+import { IconQuestionMark, IconX, IconHistory, IconLock, IconSearch } from '@tabler/icons';
+import DarkModeToggle from '../components/DarkMode';
+import StatusBar from '../components/StatusBar';
+import Controls from '../components/Controls';
 
 function App() {
   const firstLoad = useRef(true);
@@ -27,6 +29,9 @@ function App() {
   const [smallImageText, setSmallImageText] = useState('');
   const [partySize, setPartySize] = useState(0);
   const [partyMax, setPartyMax] = useState(0);
+  const [button1, setButton1] = useState({ label: '', url: '' });
+  const [button2, setButton2] = useState({ label: '', url: '' });
+  const [buttons, setButtons] = useState([]);
 
   const reset = () => {
     setisBroadcasting(false);
@@ -44,6 +49,9 @@ function App() {
     setTimestampStart(true);
     setLargeImageKey('');
     setLargeImageText('');
+    setPartySize(0);
+    setPartyMax(0);
+    setButtons([]);
   }
 
   const broadcast = async (): Promise<void> => {
@@ -67,7 +75,8 @@ function App() {
       largeImageText: largeImageText,
       smallImageKey: smallImageKey,
       smallImageText: smallImageText,
-      //party: [partySize, partyMax]
+      //party: [partySize, partyMax],
+      //buttons: buttons
     }
 
     reset();
@@ -94,16 +103,30 @@ function App() {
       largeImageText: largeImageText,
       smallImageKey: smallImageKey,
       smallImageText: smallImageText,
-      //party: [partySize, partyMax]
+      //party: [partySize, partyMax],
+      //buttons: buttons
     }
 
-    await window.activityManager.updateStatus(activity);
+    setDiscordStatus(await window.activityManager.updateStatus(activity));
   }
 
-  const disconnect = async (): Promise<void> => {
-    window.activityManager.disconnect();
-    reset();
-  }
+  /*function SearchResults(): JSX.Element {
+    let results: Array<any> = [];
+    window.searchManager.search(name).then((data) => results = data)
+
+    return ( 
+      <div>
+        {results.map((val: { item: { name: string, applicationId: string } }) =>
+          <div onClick={() => {
+            setName(val.item.name);
+            setApplicationId(val.item.applicationId);
+          }}>
+            {val.item.name}
+          </div>
+        )}
+      </div>
+    )
+  }*/
 
   useEffect(() => {
     if (firstLoad.current) {
@@ -113,6 +136,10 @@ function App() {
     }
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (name !== '') null;
+  }, [name])
 
   useEffect(() => {
     if (discordStatus !== 0) {
@@ -153,39 +180,9 @@ function App() {
       setLargeImageText('');
       setSmallImageKey('');
       setSmallImageText('');
-
-      // If the change is performed after a status is being broadcasted, attempt to update the data
-      if (isBroadcasting) { updateStatus() }
+      setButtons([]);
     }
   }, [richPresenceEditor]);
-
-  const Status = () => {
-    if (processFailed) {
-      return (
-        <div className='bg-red-800 w-full statusbar overflow-hidden'>
-          <span className='truncate'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
-          <span className='grow w-1/12' />
-          <span className='flex-none'>Error: {ErrorMsg(discordStatus)} ({discordStatus})</span>
-        </div>
-      );
-    }
-    if (isBroadcasting) {
-      return (
-        <div className='bg-green-900 w-full statusbar overflow-hidden'>
-          <span className='truncate'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
-          <span className='grow w-1/12' />
-          <span className='flex-none'>Connected</span>
-        </div>
-      );
-    }
-    return (
-      <div className='dark:bg-dark-800 bg-light-200 discordTextActive w-full statusbar overflow-hidden'>
-        <span className='truncate'>{applicationId ? `${applicationId}` : 'Application ID not configured'}</span>
-        <span className='grow w-1/12' />
-        <span className='flex-none'>Ready</span>
-      </div>
-    );
-  }
 
   return (
     <main className={`${loading ? 'invisible' : 'visible'}`}>
@@ -197,146 +194,160 @@ function App() {
         <div className='mx-4 py-2 flex flex-row flex-grow-0'>
           <h1 className='py-2 text-xl text-center font-semibold discordTextActive'>Discord Status Editor</h1>
           <span className='flex grow' />
-          <button id='darkMode' className='p-2 bg-inherit rounded-md discordTextInteractive interactiveBorder' onClick={() => setDarkMode(!darkMode)}>{darkMode ? <IconMoon /> : <IconSun className='fill-dark-700' />}</button>
+          <DarkModeToggle mode={{ darkMode, setDarkMode }} />
         </div>
         <div id='bgConfig' className='flex flex-col flex-grow min-h-full m-4 p-4 mt-0 dark:bg-dark-800 dark:text-dark-200 bg-light-200 text-light-900 backdrop-blur-md rounded'>
           <form id='activityProperties' className='flex flex-col space-y-1'>
-            <span className='flex flex-col hidden'>
-              <label htmlFor='name' className='text-sm flex space-x-1'>
-                <span>Application Name</span>
-                <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
-                  <span className='tooltip'>You may search through your stored applications here. Whatever is entered here has no effect on what Discord displays as your activity</span>
+            <div id='applicationSearchField' className='flex-col hidden'>
+              <label htmlFor='applicationSearch' className='select-none text-xs flex space-x-1'>
+                <span>Search for Application</span>
+                <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
+                  <span className='tooltip'>Search for locally stored application IDs</span>
                 </span>
               </label>
-              <input type='text' id='name' name='name' ref={broadcasting} className='inputBorder' placeholder='Application Name' value={name} onChange={(e) => { setName(e.target.value) }} />
-            </span>
+              <input type='text' id='applicationSearch' name='applicationSearch' className={`inputBorder text-sm`} placeholder='Application Name' value={name} onChange={(e) => { setName(e.target.value) }}></input>
+            </div>
 
-            <span className='flex flex-col'>
-              <label htmlFor='applicationId' className='text-sm flex space-x-1'>
+            <div id='applicationIdField' className='flex flex-col'>
+              <label htmlFor='applicationId' className='select-none text-xs flex space-x-1'>
                 <span>Application ID</span>
-                <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
+                <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
                   <span className='tooltip'>An Application ID is the unique identifier that Discord uses to know what application you're using. If you do not know this value, you may need to first create one at Discord's Developer Portal</span>
                 </span>
               </label>
-              <input type='text' id='applicationId' name='applicationId' className={`inputBorder ${isBroadcasting ? 'disabled' : ''}`} placeholder='Application ID' value={applicationId} onChange={(e) => { setApplicationId(e.target.value) }} maxLength={64} required />
-            </span>
+              <input type='text' id='applicationId' name='applicationId' className={`inputBorder text-sm disabled:discordTextInactive disabled:cursor-not-allowed`} placeholder='Application ID' value={applicationId} onChange={(e) => { setApplicationId(e.target.value) }} maxLength={32} required disabled={isBroadcasting ? true : false} onKeyDown={(e) => { console.log(e) }} onKeyDownCapture={(e) => { if (e.altKey && (e.code === 'Enter' || e.code === 'NumpadEnter')) { isBroadcasting ? updateStatus() : broadcast() } }} />
+            </div>
 
-            <div className={`space-y-2 ${richPresenceEditor ? 'visible' : 'invisible'}`}>
+            <div id='richPresenceFields' className={`space-y-2 ${richPresenceEditor ? 'visible' : 'invisible'}`}>
               <div className='flex flex-row space-x-2'>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='details' className='text-sm flex space-x-1'>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='details' className='select-none text-xs flex space-x-1'>
                     <span>Details</span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
                       <span className='tooltip'>What you are currently doing in-game</span>
                     </span>
                   </label>
-                  <input type='text' id='details' name='details' className='inputBorder' placeholder='Details' value={details} onChange={(e) => { setDetails(e.target.value) }} />
-                </span>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='state' className='text-sm flex space-x-1'>
-                    <span>
-                      State
-                    </span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
+                  <input type='text' id='details' name='details' className='inputBorder text-sm' placeholder='Details' value={details} onChange={(e) => { setDetails(e.target.value) }} />
+                </div>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='state' className='select-none text-xs flex space-x-1'>
+                    <span>State</span>
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
                       <span className='tooltip'>A description of your party's status (e.g. Playing Solo, Going Duo, In a Squad, etc.)</span>
                     </span>
                   </label>
-                  <input type='text' id='state' name='state' className='inputBorder' placeholder='State' value={state} onChange={(e) => { setState(e.target.value) }} />
-                </span>
+                  <input type='text' id='state' name='state' className='inputBorder text-sm' placeholder='State' value={state} onChange={(e) => { setState(e.target.value) }} />
+                </div>
               </div>
 
               <div className='flex flex-row space-x-2'>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='largeImageKey' className='text-sm flex space-x-1'>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='largeImageKey' className='select-none text-xs flex space-x-1'>
                     <span>Large Image Key</span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
-                      <span className='tooltip'>The case-sensitive key for the artwork uploaded under the application's Rich Presence Assets. If the key matches, the image set here will be shown to other users</span>
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
+                      <span className='tooltip'>The all lowercase identifier for the artwork uploaded under the application's Rich Presence Assets. If the key matches, the image set here will be shown to other users</span>
                     </span>
                   </label>
-                  <input type='text' id='largeImageKey' name='largeImageKey' className='inputBorder' placeholder='Large Image Key' value={largeImageKey} onChange={(e) => { setLargeImageKey(e.target.value) }} />
-                </span>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='largeImageText' className='text-sm flex space-x-1'>
+                  <input type='text' id='largeImageKey' name='largeImageKey' className='inputBorder text-sm' placeholder='Large Image Key' value={largeImageKey} onChange={(e) => { setLargeImageKey(e.target.value) }} />
+                </div>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='largeImageText' className='select-none text-xs flex space-x-1'>
                     <span>Large Image Text</span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
                       <span className='tooltip'>The tooltip when hovering over the large artwork</span>
                     </span>
                   </label>
-                  <input type='text' id='largeImageText' name='largeImageText' className='inputBorder' placeholder='Large Image Text' value={largeImageText} onChange={(e) => { setLargeImageText(e.target.value) }} />
-                </span>
+                  <input type='text' id='largeImageText' name='largeImageText' className='inputBorder text-sm' placeholder='Large Image Text' value={largeImageText} onChange={(e) => { setLargeImageText(e.target.value) }} />
+                </div>
               </div>
 
               <div className='flex flex-row space-x-2'>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='smallImageKey' className='text-sm flex space-x-1'>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='smallImageKey' className='select-none text-xs flex space-x-1'>
                     <span>Small Image Key</span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
-                      <span className='tooltip'>The case-sensitive key for the artwork uploaded under the application's Rich Presence Assets. The image will be shown on the bottom-right corner of the large image set above &ndash; if the this value is set but the large image key is not, this value will take its place</span>
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
+                      <span className='tooltip'>The all lowercase identifier for the artwork uploaded under the application's Rich Presence Assets. The image will be shown on the bottom-right corner of the large image set above &ndash; if the this value is set but the large image key is not, this value will take its place</span>
                     </span>
                   </label>
-                  <input type='text' id='smallImageKey' name='smallImageKey' className='inputBorder' placeholder='Small Image' value={smallImageKey} onChange={(e) => { setSmallImageKey(e.target.value) }} />
-                </span>
-                <span className='flex flex-col w-1/2'>
-                  <label htmlFor='smallImageText' className='text-sm flex space-x-1'>
+                  <input type='text' id='smallImageKey' name='smallImageKey' className='inputBorder text-sm' placeholder='Small Image Key' value={smallImageKey} onChange={(e) => { setSmallImageKey(e.target.value) }} />
+                </div>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='smallImageText' className='select-none text-xs flex space-x-1'>
                     <span>Small Image Text</span>
-                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='14px' />
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
                       <span className='tooltip'>The tooltip when hovering over the small artwork</span>
                     </span>
                   </label>
-                  <input type='text' id='smallImageText' name='smallImageText' className='inputBorder' placeholder='Small Image Text' value={smallImageText} onChange={(e) => { setSmallImageText(e.target.value) }} />
-                </span>
+                  <input type='text' id='smallImageText' name='smallImageText' className='inputBorder text-sm' placeholder='Small Image Text' value={smallImageText} onChange={(e) => { setSmallImageText(e.target.value) }} />
+                </div>
+              </div>
+
+              <div className='flex flex-row space-x-2 hidden'>
+                <div className='flex flex-col w-1/12'>
+                  <label htmlFor='partySize' className='select-none text-xs flex space-x-1'>
+                    Size
+                  </label>
+                  <input type='number' id='partySize' name='partySize' min={0} className='appearance-none inputBorder text-sm w-max-2' placeholder='Size' value={partySize} onChange={(e) => {
+                    if (e.target.valueAsNumber > partyMax) { setPartyMax(e.target.valueAsNumber); }
+                    setPartySize(e.target.valueAsNumber);
+                  }} />
+                </div>
+                <span className='flex flex-col text-xs h-full'><span className='flex' /><span className='flex'>of</span></span>
+                <div className='flex flex-col w-1/12'>
+                  <label htmlFor='partyMax' className='select-none text-xs flex space-x-1'>
+                    Max
+                  </label>
+                  <input type='number' id='partyMax' name='partyMax' min={0} className='appearance-none inputBorder text-sm w-max-2' placeholder='Max' value={partyMax} onChange={(e) => {
+                    if (e.target.valueAsNumber <= partySize) { setPartySize(e.target.valueAsNumber); }
+                    setPartyMax(e.target.valueAsNumber);
+                  }} />
+                </div>
+              </div>
+
+              <div className='flex flex-row space-x-2 hidden'>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='button1' className='select-none text-xs flex space-x-1'>
+                    <span>Button 1 Label</span>
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
+                      <span className='tooltip'>This is a button that will take the user to the specified URL. It will appear below the activity. A quirk is that the original user will not be able to use the button.</span>
+                    </span>
+                  </label>
+                  <input type='text' id='button1' name='Button 1 Label' className='inputBorder text-sm' placeholder='Button 1 Label' value={smallImageKey} onChange={(e) => { setSmallImageKey(e.target.value) }} />
+                </div>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='button1Url' className='select-none text-xs flex space-x-1'>
+                    <span>Button 1 URL</span>
+                  </label>
+                  <input type='text' id='button1Url' name='button1Url' className='inputBorder text-sm' placeholder='Button 1 URL' value={smallImageText} onChange={(e) => { setSmallImageText(e.target.value) }} />
+                </div>
+              </div>
+              <div className='flex flex-row space-x-2 hidden'>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='button1' className='select-none text-xs flex space-x-1'>
+                    <span>Button 2 Label</span>
+                    <span className='has-tooltip'><IconQuestionMark className='dark:bg-dark-700 bg-light-300 interactiveBorder rounded-full' size='12px' />
+                      <span className='tooltip'>This is a button that will take the user to the specified URL. It will appear below the activity. A quirk is that the original user will not be able to use the button.</span>
+                    </span>
+                  </label>
+                  <input type='text' id='button2' name='Button 2 Label' className='inputBorder text-sm' placeholder='Button 2 Label' value={smallImageKey} onChange={(e) => { setButton2({ label: e.target.value, url: '' }) }} />
+                </div>
+                <div className='flex flex-col w-1/2'>
+                  <label htmlFor='button2Url' className='select-none text-xs flex space-x-1'>
+                    <span>Button 2 URL</span>
+                  </label>
+                  <input type='text' id='button2Url' name='button2Url' className='inputBorder text-sm' placeholder='Button 2 URL' value={smallImageText} onChange={(e) => { setSmallImageText(e.target.value) }} />
+                </div>
               </div>
             </div>
           </form>
-
           <div className='grow' />
-
-          <div id='operationControl' className='flex flex-row space-x-5 font-semibold'>
-            <button id='editorStyle' className='p-2 bg-inherit rounded-md discordTextInteractive' onClick={() => setRichPresenceEditor(!richPresenceEditor)}>{
-              richPresenceEditor
-                ? <span className='flex space-x-1'><IconFileText /><span>Rich Presence</span><span className='has-tooltip'><IconQuestionMark size='12px' /><span className='tooltip text-sm bottom-11 left-0 font-normal'>The editor is in <strong>rich presence</strong> mode<br /><br />The rich presence editor grants the user more control over what gets shown in their status message</span></span></span>
-                : <span className='flex space-x-1'><IconFile /><span>Simple</span><span className='has-tooltip'><IconQuestionMark size='12px' /><span className='tooltip text-sm bottom-11 left-0 font-normal'>The editor is in <strong>simple</strong> mode<br /><br />No rich presence assets can be configured, and Discord will use the application's <strong>default app icon</strong></span></span></span>
-            }</button>
-            <span className='grow' />
-
-            {/* RESET/DISCONNECT */}
-            {isBroadcasting
-              ? <button
-                id='disconnect'
-                className='flex border border-solid border-red-500 hover:bg-red-500 p-2 discordTextActive hover:text-white rounded-md space-x-1'
-                onClick={disconnect}>
-                <IconBroadcastOff /><span>Disconnect</span>
-              </button>
-              : <button
-                id='reset'
-                className='flex discordTextActive p-2 w-max-1/4 rounded-md discordTextInteractive space-x-1'
-                onClick={resetData}>
-                <IconEraser /><span>Reset</span>
-              </button>
-            }
-
-            {/* BROADCAST/UPDATE */}
-            {isBroadcasting
-              ? <button
-                id='update'
-                className='flex p-2 w-max-1/4 rounded-md space-x-1 text-white bg-indigo-600 hover:bg-indigo-700'
-                onClick={updateStatus}>
-                <IconEdit /><span>Update</span>
-              </button>
-              : <button
-                id='broadcast'
-                className='flex p-2 w-max-1/4 rounded-md space-x-1 text-white bg-indigo-600 hover:bg-indigo-700'
-                onClick={broadcast}>
-                <IconBroadcast /><span>Broadcast</span>
-              </button>
-            }
-          </div>
+          <Controls vars={{ richPresenceEditor, isBroadcasting }} hooks={{ reset, resetData, setRichPresenceEditor, broadcast, updateStatus }} />
         </div>
-
-        <div id='discordStatus' className='flex flex-row font-semibold'>
-          <Status />
+        <div id='discordStatus'>
+          <StatusBar props={{ processFailed, isBroadcasting, applicationId, discordStatus }} />
         </div>
       </div>
+
     </main>
   );
 }

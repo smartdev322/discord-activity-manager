@@ -6,7 +6,7 @@ export namespace Activities {
     details?: string;
     timestamp?: ActivityTimestamps;
     assets?: ActivityAssets;
-    party?: ActivityParty;
+    party?: PartySize;
   }
 
   interface ActivityTimestamps {
@@ -22,8 +22,8 @@ export namespace Activities {
   }
   
   interface ActivityParty {
-    id: string,
-    size: PartySize
+    id?: string,
+    size?: PartySize
   }
 
   interface PartySize {
