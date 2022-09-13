@@ -30,7 +30,7 @@ client.login({ clientId }).catch((reject: TransportRejection) => {
   if (reject.message === 'Error: could not connect') { process.exit(1000) }
   process.exit(reject.code || 1000);
 });
-client.on('ready', (e) => {
+client.on('ready', () => {
   updateActivity(activity);
 });
 client.on('disconnect', () => {
@@ -52,7 +52,9 @@ process.on('exit', () => {
 });
 
 function updateActivity(activity: Activities.Activity) {
-  client.setActivity(activity).catch((err) => {
+  client.setActivity(activity).then(() => {
+    process.send('ptStatusOK');
+  }).catch((err) => {
     process.exit(err.code);
   });
 }

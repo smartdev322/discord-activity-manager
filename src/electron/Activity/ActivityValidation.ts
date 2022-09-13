@@ -10,6 +10,7 @@ export class ActivityValidation {
     if (activity.state) errors.push(this.validUserString(activity.state));
     if (activity.details) errors.push(this.validUserString(activity.details));
     if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
+    if (activity.party) errors.push(this.validParty(activity.party));
 
     errors.forEach((check) => {
       if (check !== true) valid = false;
@@ -49,5 +50,10 @@ export class ActivityValidation {
     const testDate = date.end || date.start;
     
     return (DateTime.fromMillis(testDate).isValid);
+  }
+
+  private static validParty(array: Activities.PartySize): boolean {
+    if (typeof(array.currentSize) === 'number' && typeof(array.maxSize) === 'number') return (true);
+    return (false);
   }
 }

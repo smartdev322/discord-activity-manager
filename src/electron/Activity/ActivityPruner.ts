@@ -5,7 +5,7 @@
 import { Activities } from "../types/activities";
 
 interface ActivityIndex extends Activities.Activity{
-  [key: string]: string | number | Activities.ActivityAssets | Activities.ActivityTimestamps | Activities.ActivityParty;
+  [key: string]: string | number | Activities.ActivityAssets | Activities.ActivityTimestamps | Activities.PartySize;
 }
 
 export function prune(activity: Activities.Activity): Activities.Activity {

@@ -1,11 +1,17 @@
+/** discord-rpc.ts
+ * A modification of the original discord-rpc connect function to improve how Discord API errors are communicated to the user
+ */
+
 import { Client, RPCClientOptions } from 'discord-rpc';
 
-/** MODIFIED connect function from 'discord-rpc' to provide better error reporting */
 export class RPCClient extends Client {
   constructor(options: RPCClientOptions) {
     super(options);
   }
 
+  /**
+   * @override connect
+   */
   public connect(clientId: string): Promise<Client> {
     if (this._connectPromise) {
       return this._connectPromise;
@@ -19,7 +25,6 @@ export class RPCClient extends Client {
         resolve(this);
       });
       this.transport.once('close', (err: any) => {
-        console.log(err);
         this._expecting.forEach((e) => {
           e.reject(err);
         });
