@@ -14,26 +14,24 @@ export class ActivityManager {
 
   public async activityLauncher(activity: Activities.Activity): Promise<number> {
 
-    /* Early checks to prevent issues later on */
-    // Stop if we already have an activity bring broadcasted
+    // Disconnects the existing activity if it's still active
     if (this.activityProcess && this.activityProcess.exitCode === null) {
-      console.log(`Activity process (${this.activityProcess.pid}) is still active and a new one will not be created until it is closed.`);
-      this.activityProcess.kill(0);
-      //return (101);
+      //console.log(`Disconnecting currently active process (${this.activityProcess.pid})`);
+      if (!this.disconnect()) {
+        // If the existing process cannot be disconnected
+        return (101);
+      }
     }
 
-    const validData: boolean = ActivityValidation.validActivity(activity);
-    if (!validData) {
-      console.log("The provided activity contains missing or invalid data");
-      return (103);
-    }
+    // Data check
+    if (!ActivityValidation.validActivity(activity)) return (103);
 
+    // Remove empty fields and update the user's activity
     await this.createActivity(prune(activity));
 
     if (this.activityProcess) {
-      this.activityProcess.on('close', (code: number, signal: NodeJS.Signals) => {console.log(`Process closed with code ${code} and signal ${signal}`)})
       this.activityProcess.on('exit', (code: number) => { console.log(`Process exited with code ${code}`) });
-      this.activityProcess.on('message', (msg: string | Activities.Activity) => { console.log(msg) });
+      this.activityProcess.on('message', (msg: string | Activities.Activity) => { if (msg === 'ptStatusOK') { console.log(); } else { console.log(msg) }});
       this.activityProcess.on('error', (err: Error) => { console.error(err) });
     }
 
@@ -43,26 +41,19 @@ export class ActivityManager {
   }
 
   public async updateActivity(activity: Activities.Activity): Promise<number> {
-    let exitCode: number | string = 0;
-    const validData: boolean = ActivityValidation.validActivity(activity);
-    if (!validData) {
-      console.log("The provided activity contains missing or invalid data");
-      return (103);
-    }
+    if (!ActivityValidation.validActivity(activity)) return (103);
 
     if (!this.activityProcess) {
-      console.error('The process has not been launched.');
-      exitCode = await this.activityLauncher(prune(activity));
+      return (await this.activityLauncher(prune(activity)));
     }
-    else {
-      this.activityProcess.send(JSON.stringify(prune(activity)));
-    }
+
+    this.activityProcess.send(JSON.stringify(prune(activity)));
     return (0);
   }
 
   // Creates a fork
   private async createActivity(activity: Activities.Activity): Promise<void> {
-    this.activityProcess = fork('./dist/discord/ActivityProcess', [JSON.stringify(activity)]);
+    this.activityProcess = fork(`${__dirname}/ActivityProcess`, [JSON.stringify(activity)]);
   }
 
   /**
