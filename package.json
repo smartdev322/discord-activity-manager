@@ -3,22 +3,23 @@
   "version": "1.0.0",
   "description": "An easy-to-use Discord activity manager",
   "scripts": {
-    "build": "npm run lint && concurrently \"npm:build-next\" \"npm:build-electron\"",
-    "build-next": "next build && next export",
+    "build": "npm run format && npm run lint && concurrently \"npm:build-next\" \"npm:build-electron\"",
+    "build-next": "npm run format && next build && next export -o dist/",
     "build-electron": "tsc --project ./src/electron/tsconfig.json",
-    "package": "electron-builder build",
-    "electron": "concurrently -n next,electron -k \"next dev\" \"wait-on tcp:3000 && electron ./dist/main.js\"",
-    "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "next": "next dev",
     "dev": "npm run build-electron && npm run electron",
-    "start": "npm run build && electron ./dist/main.js",
-    "export": "electron-packager . SwitchRP --platform=win32 --arch=ia32 --out=./dist --overwrite"
+    "electron": "concurrently -n next,electron -k \"next dev\" \"wait-on tcp:3000 && electron ./build/main.js\"",
+    "export": "npm run lint && electron-packager ./build actmgr --platform=win32 --arch=ia32 --out=./build --overwrite",
+    "format": "prettier --write {pages,components}/**/*.tsx",
+    "lint": "npm run format && next lint",
+    "next": "next dev",
+    "start": "npm run build && electron ./build/main.js"
   },
   "repository": "https://github.com/alairon/discord-activity-manager",
   "keywords": [
     "Electron",
     "typescript"
   ],
+  "main": "main.js",
   "author": "alairon",
   "license": "MIT",
   "homepage": ".",
@@ -40,6 +41,7 @@
     "tailwindcss": "^3.1.8"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^12.3.0",
     "@types/discord-rpc": "^4.0.3",
     "@types/luxon": "^3.0.1",
     "@types/node": "^18.7.18",
@@ -52,7 +54,9 @@
     "electron-is-dev": "^2.0.0",
     "electron-packager": "^16.0.0",
     "eslint": "^8.23.1",
-    "eslint-plugin-tailwindcss": "^3.6.1",
+    "eslint-plugin-tailwindcss": "^3.6.2",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.1.13",
     "typescript": "^4.8.3",
     "wait-on": "^6.0.1"
   }
