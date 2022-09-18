@@ -1,11 +1,11 @@
 declare global {
   interface Window {
     activityManager: {
-      broadcastStatus: (activity: any) => Promise<number>;
-      updateStatus: (activity: any) => Promise<number>;
+      broadcastStatus: (activity: Activities.Activity) => Promise<number>;
+      updateStatus: (activity: Activities.Activity) => Promise<number>;
       disconnect: () => Promise<void>;
     };
   }
 }
 
-export { }
+export {};

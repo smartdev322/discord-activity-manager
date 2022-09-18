@@ -5,7 +5,7 @@ export class ActivityValidation {
   public static validActivity(activity: Activities.Activity): boolean {
     const errors = [];
     let valid = true;
-    if (!this.validApplicationId(activity.applicationId)) return (false);
+    if (!this.validApplicationId(activity.applicationId)) return false;
 
     if (activity.state) errors.push(this.validUserString(activity.state));
     if (activity.details) errors.push(this.validUserString(activity.details));
@@ -14,9 +14,9 @@ export class ActivityValidation {
 
     errors.forEach((check) => {
       if (check !== true) valid = false;
-    })
-    
-    return (valid);
+    });
+
+    return valid;
   }
 
   /**
@@ -25,8 +25,8 @@ export class ActivityValidation {
    * @returns Whether the application ID is a string
    */
   private static validApplicationId(appId: unknown): boolean {
-    if (typeof (appId) === 'string' && appId.length > 0) return (true);
-    return (false);
+    if (typeof appId === 'string' && appId.length > 0) return true;
+    return false;
   }
 
   /**
@@ -35,25 +35,29 @@ export class ActivityValidation {
    * @returns Whether the user string is valid
    */
   private static validUserString(userString: unknown): boolean {
-    if (typeof (userString) !== 'string') return (false);
-    if (userString.length > 128) return (false);
-    return (true);
+    if (typeof userString !== 'string') return false;
+    if (userString.length > 128) return false;
+    return true;
   }
 
   /**
    * Uses the Luxon isValid function to check if the date provided is valid
-   * @param date 
-   * @returns 
+   * @param date
+   * @returns
    */
-  private static validDate(date: any): boolean {
-    if (!date.start && !date.end) return (false);
+  private static validDate(date: Activities.ActivityTimestamps): boolean {
+    if (!date.start && !date.end) return false;
     const testDate = date.end || date.start;
-    
-    return (DateTime.fromMillis(testDate).isValid);
+
+    return DateTime.fromMillis(testDate).isValid;
   }
 
   private static validParty(array: Activities.PartySize): boolean {
-    if (typeof(array.currentSize) === 'number' && typeof(array.maxSize) === 'number') return (true);
-    return (false);
+    if (
+      typeof array.currentSize === 'number' &&
+      typeof array.maxSize === 'number'
+    )
+      return true;
+    return false;
   }
 }

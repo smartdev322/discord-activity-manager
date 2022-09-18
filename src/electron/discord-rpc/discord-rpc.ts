@@ -18,13 +18,16 @@ export class RPCClient extends Client {
     }
     this._connectPromise = new Promise((resolve, reject) => {
       this.clientId = clientId;
-      const timeout: NodeJS.Timeout = setTimeout(() => reject(new Error('RPC_CONNECTION_TIMEOUT')), 10e3);
+      const timeout: NodeJS.Timeout = setTimeout(
+        () => reject(new Error('RPC_CONNECTION_TIMEOUT')),
+        10e3
+      );
       timeout.unref();
       this.once('connected', () => {
         clearTimeout(timeout);
         resolve(this);
       });
-      this.transport.once('close', (err: any) => {
+      this.transport.once('close', (err: Error) => {
         this._expecting.forEach((e) => {
           e.reject(err);
         });

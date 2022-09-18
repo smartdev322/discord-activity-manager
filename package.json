@@ -9,7 +9,7 @@
     "dev": "npm run build-electron && npm run electron",
     "electron": "concurrently -n next,electron -k \"next dev\" \"wait-on tcp:3000 && electron ./build/main.js\"",
     "export": "npm run lint && electron-packager ./build actmgr --platform=win32 --arch=ia32 --out=./build --overwrite",
-    "format": "prettier --write {pages,components}/**/*.tsx",
+    "format": "prettier --write {pages,components,src,styles}/**/*{.ts,.tsx,.css}",
     "lint": "npm run format && next lint",
     "next": "next dev",
     "start": "npm run build && electron ./build/main.js"

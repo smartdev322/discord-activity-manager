@@ -10,24 +10,26 @@ export namespace Activities {
   }
 
   interface ActivityTimestamps {
-    start?: number,
-    end?: number
+    start?: number;
+    end?: number;
   }
 
   interface ActivityAssets {
-    largeImageKey?: string,
-    largeImageText?: string,
-    smallImageKey?: string,
-    smallImageText?: string
-  }
-  
-  interface ActivityParty {
-    id?: string,
-    size?: PartySize
+    largeImageKey?: string;
+    largeImageText?: string;
+    smallImageKey?: string;
+    smallImageText?: string;
   }
 
+  /* May be used in the future
+  interface ActivityParty {
+    id?: string;
+    size?: PartySize;
+  }
+  */
+
   interface PartySize {
-    currentSize: number,
-    maxSize: number
+    currentSize: number;
+    maxSize: number;
   }
 }

@@ -3,10 +3,10 @@
  */
 
 interface ErrorCodeTable {
-  [key: number]: string
+  [key: number]: string;
 }
 
-export default function ErrorMsg(code: number): string{
+export default function ErrorMsg(code: number): string {
   const message: ErrorCodeTable = {
     100: 'Discord Error',
     101: 'Process already active',
@@ -25,8 +25,8 @@ export default function ErrorMsg(code: number): string{
     4008: 'Invalid OAuth2/origin',
     4009: 'Invalid OAuth2 token',
     4010: 'Invalid user',
-    5000: 'General OAuth2 error'
-  }
+    5000: 'General OAuth2 error',
+  };
 
-  return (message[code] || 'Unknown')
+  return message[code] || 'Unknown';
 }

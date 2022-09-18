@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-  @layer components {
-    @layer base {
+@layer components {
+  @layer base {
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -12,27 +12,27 @@
   }
 
   .statusbar {
-    @apply px-4 py-2 text-white flex text-sm
+    @apply flex select-none px-4 py-2 text-sm text-white;
   }
 
   .inputBorder {
-    @apply bg-inherit border border-solid dark:outline-dark-300 dark:border-dark-300 outline-light-600 border-light-600 rounded-sm p-1
+    @apply rounded-sm border border-solid border-light-600 bg-inherit p-1 outline-light-600 dark:border-dark-300 dark:outline-dark-300;
   }
 
   .interactiveBorder {
-    @apply bg-inherit border-none dark:outline-dark-300 dark:border-dark-300 outline-light-600 border-light-300
+    @apply border-none border-light-300 bg-inherit outline-light-600 dark:border-dark-300 dark:outline-dark-300;
   }
 
   .discordTextInactive {
-    @apply dark:text-dark-400 text-light-500
+    @apply text-light-500 dark:text-dark-400;
   }
 
   .discordTextActive {
-    @apply dark:text-white text-light-900
+    @apply text-light-900 dark:text-white;
   }
 
   .discordTextInteractive {
-    @apply text-light-700 dark:text-dark-300 hover:bg-light-300 dark:hover:bg-dark-700
+    @apply text-light-700 hover:bg-light-300 dark:text-dark-300 dark:hover:bg-dark-700;
   }
 
   .tooltip {
@@ -40,7 +40,7 @@
   }
 
   .has-tooltip:hover .tooltip {
-    @apply visible bg-white/75 dark:bg-black/75 backdrop-blur-md rounded-xl p-2 z-10;
+    @apply visible z-10 rounded-xl bg-white/75 p-2 backdrop-blur-md dark:bg-black/75;
   }
 
   .dropdown {
@@ -48,6 +48,6 @@
   }
 
   .has-dropdown:focus .dropdown {
-    @apply visible bg-white/75 dark:bg-black/75 backdrop-blur-md rounded-xl p-2 z-10;
+    @apply visible z-10 rounded-xl bg-white/75 p-2 backdrop-blur-md dark:bg-black/75;
   }
 }

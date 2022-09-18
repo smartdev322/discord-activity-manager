@@ -7,10 +7,11 @@ import { Activities } from '../types/activities';
 import { RPCClient as Client } from '../discord-rpc/discord-rpc';
 import { TransportRejection } from 'discord-rpc';
 
-
 // Forces the application to be forked from a parent node process
 if (process.send === undefined) {
-  console.error('This process was not created properly and no changes have been made.\nPlease launch the application from the client.');
+  console.error(
+    'This process was not created properly and no changes have been made.\nPlease launch the application from the client.'
+  );
   process.exit(1);
 }
 
@@ -27,7 +28,9 @@ const clientId = activity.applicationId;
 
 const client = new Client({ transport: 'ipc' });
 client.login({ clientId }).catch((reject: TransportRejection) => {
-  if (reject.message === 'Error: could not connect') { process.exit(1000) }
+  if (reject.message === 'Error: could not connect') {
+    process.exit(1000);
+  }
   process.exit(reject.code || 1000);
 });
 client.on('ready', () => {
@@ -41,7 +44,7 @@ client.on('disconnect', () => {
 
 process.on('message', (activity: string) => {
   updateActivity(JSON.parse(activity));
-})
+});
 process.on('disconnect', () => {
   client.clearActivity();
   client.destroy();
@@ -52,9 +55,12 @@ process.on('exit', () => {
 });
 
 function updateActivity(activity: Activities.Activity) {
-  client.setActivity(activity).then(() => {
-    process.send('ptStatusOK');
-  }).catch((err) => {
-    process.exit(err.code);
-  });
+  client
+    .setActivity(activity)
+    .then(() => {
+      process.send('ptStatusOK');
+    })
+    .catch((err) => {
+      process.exit(err.code);
+    });
 }
