@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "An easy-to-use Discord activity manager",
   "scripts": {
-    "build": "npm run format && npm run lint && concurrently \"npm:build-next\" \"npm:build-electron\"",
+    "build": "npm run lint && concurrently \"npm:build-next\" \"npm:build-electron\"",
     "build-next": "npm run format && next build && next export -o dist/",
-    "build-electron": "tsc --project ./src/electron/tsconfig.json",
+    "build-electron": "tsc --project ./src/tsconfig.json",
     "dev": "npm run build-electron && npm run electron",
     "electron": "concurrently -n next,electron -k \"next dev\" \"wait-on tcp:3000 && electron ./build/main.js\"",
     "export": "npm run lint && electron-packager ./build actmgr --platform=win32 --arch=ia32 --out=./build --overwrite",
