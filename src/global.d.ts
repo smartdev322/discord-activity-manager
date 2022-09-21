@@ -1,3 +1,5 @@
+import { Activities } from './types/activities';
+
 declare global {
   interface Window {
     activityManager: {

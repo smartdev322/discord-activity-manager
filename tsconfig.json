@@ -22,7 +22,7 @@
     "**/*.tsx"
   ],
   "exclude": [
-    "src/electron",
+    "src",
     "node_modules"
   ]
 }

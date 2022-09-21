@@ -7,14 +7,25 @@
     "noImplicitAny": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "outDir": "../../build",
-    "typeRoots": ["../../types", "../../node_modules/@types"],
+    "outDir": "../build",
+    "typeRoots": [
+      "./types",
+      "../node_modules/@types"
+    ],
     "removeComments": true,
     "paths": {
-      "*": ["../../node_modules/*"]
+      "*": [
+        "../node_modules/*"
+      ]
     }
   },
   "include": [
-    "./**/*"
+    "./**/*",
+    "./main.ts",
+    "./preload.ts",
+    "./renderer.ts",
+    "./types",
+    "./discord-rpc",
+    "./Activity"
   ]
 }
