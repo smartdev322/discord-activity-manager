@@ -40,7 +40,7 @@
   }
 
   .has-tooltip:hover .tooltip {
-    @apply visible z-10 rounded-xl bg-white/75 p-2 backdrop-blur-md dark:bg-black/75;
+    @apply visible z-10 max-w-prose rounded-xl bg-white/75 p-2 backdrop-blur-md dark:bg-black/75;
   }
 
   .dropdown {

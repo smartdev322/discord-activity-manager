@@ -17,3 +17,10 @@ contextBridge.exposeInMainWorld('activityManager', {
     ipcRenderer.invoke('pt:disconnect');
   },
 });
+
+//
+contextBridge.exposeInMainWorld('searchManager', {
+  search: async (search: string): Promise<Array<any>> => {
+    return await ipcRenderer.invoke('pt:search', search);
+  },
+});

@@ -1,17 +1,19 @@
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { ActivityManager } from './Activity/ActivityManager';
+import { SearchManager } from './Data/search';
 import { Activities } from './types/activities';
 import * as path from 'path';
 import electronIsDev = require('electron-is-dev');
 const Activity = new ActivityManager();
+const Search = new SearchManager();
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     show: false,
-    height: 550,
-    width: 550,
-    minHeight: 550,
+    height: 575,
+    width: 600,
+    minHeight: 575,
     minWidth: 550,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -24,7 +26,7 @@ function createWindow() {
 
   electronIsDev
     ? mainWindow.loadURL(`http://localhost:3000`)
-    : mainWindow.loadFile(`${path.join(__dirname, '../out/index.html')}`);
+    : mainWindow.loadFile(`${path.join(__dirname, './index.html')}`);
 
   // Open the DevTools.
   if (electronIsDev) mainWindow.webContents.openDevTools();
@@ -59,6 +61,11 @@ ipcMain.handle(
 /* eslint-disable  @typescript-eslint/no-unused-vars */
 ipcMain.handle('pt:disconnect', async (_): Promise<void> => {
   Activity.disconnect();
+});
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+ipcMain.handle('pt:search', async (_, search: string): Promise<Array<any>> => {
+  return Search.searchList(search);
 });
 
 // This method will be called when Electron has finished
