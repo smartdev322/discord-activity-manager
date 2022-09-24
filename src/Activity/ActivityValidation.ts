@@ -11,6 +11,8 @@ export class ActivityValidation {
     if (activity.details) errors.push(this.validUserString(activity.details));
     if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
     if (activity.party) errors.push(this.validParty(activity.party));
+    if (activity.buttons.length > 0)
+      errors.push(this.validButtons(activity.buttons));
 
     errors.forEach((check) => {
       if (check !== true) valid = false;
@@ -58,6 +60,15 @@ export class ActivityValidation {
       typeof array.maxSize === 'number'
     )
       return true;
+    return false;
+  }
+
+  private static validButtons(buttons: Array<Activities.Buttons>): boolean {
+    const urlRegex = /https:.*/; //HTTPS only
+    buttons.forEach((val) => {
+      return urlRegex.test(val.url);
+    });
+
     return false;
   }
 }

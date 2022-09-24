@@ -7,6 +7,7 @@ export namespace Activities {
     timestamp?: ActivityTimestamps;
     assets?: ActivityAssets;
     party?: PartySize;
+    buttons?: Array<Buttons>;
   }
 
   interface ActivityTimestamps {
@@ -31,5 +32,10 @@ export namespace Activities {
   interface PartySize {
     currentSize: number;
     maxSize: number;
+  }
+
+  interface Buttons {
+    label: string;
+    url: string;
   }
 }

@@ -10,7 +10,8 @@ interface ActivityIndex extends Activities.Activity {
     | number
     | Activities.ActivityAssets
     | Activities.ActivityTimestamps
-    | Activities.PartySize;
+    | Activities.PartySize
+    | Array<Activities.Buttons>;
 }
 
 export function prune(activity: Activities.Activity): Activities.Activity {
