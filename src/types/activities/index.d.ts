@@ -4,7 +4,8 @@ export namespace Activities {
     name?: string;
     state?: string;
     details?: string;
-    timestamp?: ActivityTimestamps;
+    startTimestamp?: number;
+    endTimestamp?: number;
     assets?: ActivityAssets;
     party?: PartySize;
     buttons?: Array<Buttons>;

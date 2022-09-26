@@ -9,7 +9,8 @@ export class ActivityValidation {
 
     if (activity.state) errors.push(this.validUserString(activity.state));
     if (activity.details) errors.push(this.validUserString(activity.details));
-    if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
+    //if (activity.startTimestamp) errors.push(this.validNumber(activity.startTimestamp));
+    //if (activity.timestamp) errors.push(this.validDate(activity.timestamp));
     if (activity.party) errors.push(this.validParty(activity.party));
     if (activity.buttons.length > 0)
       errors.push(this.validButtons(activity.buttons));

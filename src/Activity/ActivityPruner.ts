@@ -19,8 +19,16 @@ export function prune(activity: Activities.Activity): Activities.Activity {
   const newActivity: ActivityIndex = { ...activity };
 
   keys.forEach((key: string) => {
-    if (Object.values(newActivity[key]).length === 0) {
-      delete newActivity[key];
+    switch (typeof newActivity[key]) {
+      case 'number':
+        if (newActivity[key] == 0 || newActivity[key] === 'undefined') {
+          delete newActivity[key];
+        }
+        break;
+      default:
+        if (Object.values(newActivity[key]).length === 0) {
+          delete newActivity[key];
+        }
     }
   });
 

@@ -9,6 +9,7 @@ import {
   IconSearch,*/,
   IconBrandGithub,
 } from "@tabler/icons";
+import "../src/global.d.ts";
 import DarkModeToggle from "../components/DarkMode";
 import StatusBar from "../components/StatusBar";
 import Controls from "../components/Controls";
@@ -25,14 +26,14 @@ function App() {
 
   // Variables found in the Activity struct
   const [name, setName] = useState("");
+  const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
 
   const [applicationId, setApplicationId] = useState("");
   const [details, setDetails] = useState("");
   const [state, setState] = useState("");
-  //const [timestamp, setTimestamp] = useState(0);
-  //const [timestampStart, setTimestampStart] = useState(true);
+  const [startTimestamp, setStartTimestamp] = useState(Date.now());
   const [largeImageKey, setLargeImageKey] = useState("");
   const [largeImageText, setLargeImageText] = useState("");
   const [smallImageKey, setSmallImageKey] = useState("");
@@ -42,114 +43,105 @@ function App() {
   const [button2Label, setButton2Label] = useState("");
   const [button2Url, setButton2Url] = useState("");
 
-  const reset = () => {
+  function reset() {
     setisBroadcasting(false);
     setProcessFailed(false);
     setDiscordStatus(0);
-  };
+  }
 
-  const resetData = () => {
+  function resetData() {
     reset();
 
     setName("");
     setApplicationId("");
     setDetails("");
     setState("");
-    //setTimestamp(0);
-    //setTimestampStart(true);
     setLargeImageKey("");
     setLargeImageText("");
     setSmallImageKey("");
     setSmallImageText("");
-    //setPartySize(0);
-    //setPartyMax(0);
     setButton1Label("");
     setButton1Url("");
     setButton2Label("");
     setButton2Url("");
-  };
+  }
 
-  const createButtons = () => {
+  function createButtons() {
     const buttons = [];
     if (button1Label && button1Url)
       buttons.push({ label: button1Label, url: button1Url });
     if (button2Label && button2Url)
       buttons.push({ label: button2Label, url: button2Url });
     return buttons;
-  };
+  }
 
-  const broadcast = async (): Promise<void> => {
+  async function broadcast(): Promise<void> {
+    const startTime = Date.now();
     const activity = {
       applicationId: applicationId,
       state: state,
       details: details,
-      //timestamp: activityTimestamp(),
+      startTimestamp: startTime,
       largeImageKey: largeImageKey,
       largeImageText: largeImageText,
       smallImageKey: smallImageKey,
       smallImageText: smallImageText,
-      //party: [partySize, partyMax],
       buttons: createButtons(),
     };
 
     reset();
+    setStartTimestamp(startTime);
     setisBroadcasting(true);
 
     setDiscordStatus(await window.activityManager.broadcastStatus(activity));
-  };
+  }
 
-  const updateStatus = async () => {
+  async function updateStatus() {
     if (discordStatus !== 0) {
       setisBroadcasting(false);
       return;
     }
 
-    /*const activityTimestamp = () => {
-      if (timestampStart) {
-        return { start: Date.now() };
-      }
-      return { end: new Date(timestamp).getTime() };
-    };*/
-
     const activity = {
       applicationId: applicationId,
       state: state,
       details: details,
-      //timestamp: activityTimestamp(),
+      startTimestamp: startTimestamp,
       largeImageKey: largeImageKey,
       largeImageText: largeImageText,
       smallImageKey: smallImageKey,
       smallImageText: smallImageText,
-      //party: [partySize, partyMax],
       buttons: createButtons(),
     };
 
     setDiscordStatus(await window.activityManager.updateStatus(activity));
-  };
+  }
 
   function SearchResults(): JSX.Element {
     return (
       <div
-        className={`${isSearching ? "absolute" : "hidden"
-          } inset-x-4 top-[4em] space-y-1 overflow-y-auto bg-white dark:bg-dark-600`}
+        className={`${
+          isSearching ? "absolute" : "hidden"
+        } inset-x-4 top-16 z-20 space-y-1 overflow-y-auto bg-white dark:bg-dark-600`}
       >
-        {searchResults.slice(0, 10).map(
-          (val: { item: { name: string; applicationId: string } }) => (
+        {searchResults
+          .slice(0, 10)
+          .map((val: { item: { name: string; applicationId: string } }) => (
             <div
-              className="discordTextInteractive flex grow flex-row p-1"
+              className="discordTextInteractive flex grow flex-row p-1 px-2"
               tabIndex={0}
-              key={val.item.name.replace(/\s+/g, '')}
+              key={val.item.name.replace(/\s+/g, "")}
               onClick={() => {
                 setName(val.item.name);
                 setApplicationId(val.item.applicationId);
+                setSearch("");
                 setIsSearching(false);
               }}
             >
               <span className="overflow-hidden">{val.item.name}</span>
               <span className="grow" /> <span>{val.item.applicationId}</span>
             </div>
-          )
-        )}
+          ))}
       </div>
     );
   }
@@ -171,12 +163,14 @@ function App() {
     setLoading(false);
   }, []);
 
+  // Searches for results as data is being entered
   useEffect(() => {
-    window.searchManager.search(name).then((data: []) => {
+    window.searchManager.search(search).then((data: []) => {
       setSearchResults(data);
     });
-  }, [name]);
+  }, [search]);
 
+  // Sets the program status flags
   useEffect(() => {
     if (discordStatus !== 0) {
       setisBroadcasting(false);
@@ -231,13 +225,34 @@ function App() {
         className="flex min-h-screen w-screen flex-col bg-white dark:bg-dark-600"
       >
         <div className="mx-4 flex grow-0 flex-row py-2">
-          <h1 className="discordTextActive py-2 text-center text-xl font-semibold">
+          <h1 className="discordTextActive truncate py-2 text-center text-lg font-semibold">
             Discord Activity Manager
           </h1>
           <span className="flex grow" />
+          <div
+            id="applicationSearchField"
+            className="discordTextActive flex flex-col p-2"
+          >
+            <input
+              type="search"
+              id="applicationSearch"
+              name="applicationSearch"
+              className="inputBorder disabled:discordTextInactive rounded-md px-2 text-sm disabled:cursor-not-allowed"
+              placeholder={isBroadcasting ? "" : `Search`}
+              disabled={isBroadcasting}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              onFocus={() => {
+                setIsSearching(true);
+              }}
+            ></input>
+            <SearchResults />
+          </div>
           <button
-            id="darkMode"
-            className="discordTextInteractive interactiveBorder rounded-md bg-inherit p-2"
+            id="githubLink"
+            className="discordTextInteractive interactiveBorder hidden rounded-md bg-inherit p-2"
           >
             <a
               href="https://github.com/alairon/discord-activity-manager"
@@ -253,39 +268,6 @@ function App() {
           className="m-4 mt-0 flex min-h-full grow flex-col rounded bg-light-200 p-4 text-light-900 backdrop-blur-md dark:bg-dark-800 dark:text-dark-200"
         >
           <form id="activityProperties" className="flex flex-col space-y-1">
-            <div id="applicationSearchField" className="flex flex-col">
-              <label
-                htmlFor="applicationSearch"
-                className="flex select-none space-x-1 text-xs"
-              >
-                <span>Search for Application</span>
-                <span className="has-tooltip">
-                  <IconQuestionMark
-                    className="interactiveBorder rounded-full bg-light-300 dark:bg-dark-700"
-                    size="12px"
-                  />
-                  <span className="tooltip">
-                    Search for locally stored application IDs
-                  </span>
-                </span>
-              </label>
-              <input
-                type="search"
-                id="applicationSearch"
-                name="applicationSearch"
-                className="inputBorder text-sm"
-                placeholder="Application Name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                }}
-                onFocus={() => {
-                  setIsSearching(true);
-                }}
-              ></input>
-              <SearchResults />
-            </div>
-
             <div id="applicationIdField" className="flex flex-col">
               <label
                 htmlFor="applicationId"
@@ -341,8 +323,9 @@ function App() {
 
             <div
               id="richPresenceFields"
-              className={`space-y-2 ${richPresenceEditor ? "visible" : "invisible"
-                }`}
+              className={`space-y-2 ${
+                richPresenceEditor ? "visible" : "invisible"
+              }`}
             >
               <div className="flex flex-row space-x-2">
                 <div className="flex w-1/2 flex-col">
@@ -541,10 +524,15 @@ function App() {
                         size="12px"
                       />
                       <span className="tooltip">
-                        This is a button that will take the user to the
-                        specified URL. It will appear below the activity. A
-                        quirk is that the original user will not be able to use
-                        the button.
+                        <strong>
+                          Warning: Misuse of this feature that violates the
+                          Discord Terms of Service may result in disciplinary
+                          action on your account
+                        </strong>
+                        <br />
+                        This is a button that appears below the broadcasted
+                        activity and will take the user to the specified URL.
+                        The original user will not be able to use the button.
                       </span>
                     </span>
                   </label>
@@ -581,8 +569,9 @@ function App() {
                 </div>
               </div>
               <div
-                className={`${button1Label && button1Url ? "flex" : "hidden"
-                  } flex-row space-x-2`}
+                className={`${
+                  button1Label && button1Url ? "flex" : "hidden"
+                } flex-row space-x-2`}
               >
                 <div className="flex w-1/2 flex-col">
                   <label
@@ -657,6 +646,7 @@ function App() {
         <div id="discordStatus">
           <StatusBar
             props={{
+              name,
               processFailed,
               isBroadcasting,
               applicationId,
