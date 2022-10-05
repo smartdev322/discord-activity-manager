@@ -7,6 +7,10 @@ import electronIsDev = require('electron-is-dev');
 const Activity = new ActivityManager();
 const Search = new SearchManager();
 
+interface FuseItem {
+  item: Activities.Activity;
+}
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -42,7 +46,6 @@ function createWindow() {
   });
 }
 
-/* eslint-disable  @typescript-eslint/no-unused-vars */
 ipcMain.handle(
   'pt:broadcastStatus',
   async (_, activity: Activities.Activity): Promise<number> => {
@@ -50,7 +53,6 @@ ipcMain.handle(
   }
 );
 
-/* eslint-disable  @typescript-eslint/no-unused-vars */
 ipcMain.handle(
   'pt:updateStatus',
   async (_, activity: Activities.Activity): Promise<number> => {
@@ -58,15 +60,16 @@ ipcMain.handle(
   }
 );
 
-/* eslint-disable  @typescript-eslint/no-unused-vars */
-ipcMain.handle('pt:disconnect', async (_): Promise<void> => {
+ipcMain.handle('pt:disconnect', async (): Promise<void> => {
   Activity.disconnect();
 });
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-ipcMain.handle('pt:search', async (_, search: string): Promise<Array<any>> => {
-  return Search.searchList(search);
-});
+ipcMain.handle(
+  'pt:search',
+  async (_, search: string): Promise<Array<FuseItem>> => {
+    return Search.searchList(search);
+  }
+);
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

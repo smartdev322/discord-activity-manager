@@ -1,10 +1,7 @@
 /** ErrorMsg.ts
  * Returns a string based on the error code provided
  */
-
-interface ErrorCodeTable {
-  [key: number]: string;
-}
+import ErrorCodeTable from '../types/ErrorMsg';
 
 export default function ErrorMsg(code: number): string {
   const message: ErrorCodeTable = {

@@ -9,7 +9,6 @@ interface ActivityIndex extends Activities.Activity {
     | string
     | number
     | Activities.ActivityAssets
-    | Activities.ActivityTimestamps
     | Activities.PartySize
     | Array<Activities.Buttons>;
 }

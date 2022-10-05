@@ -2,6 +2,10 @@
 import { Activities } from './types/activities';
 import { contextBridge, ipcRenderer } from 'electron';
 
+interface FuseItem {
+  item: Activities.Activity;
+}
+
 // It has the same sandbox as a Chrome extension.
 /*window.addEventListener("DOMContentLoaded", () => {});*/
 
@@ -20,7 +24,7 @@ contextBridge.exposeInMainWorld('activityManager', {
 
 //
 contextBridge.exposeInMainWorld('searchManager', {
-  search: async (search: string): Promise<Array<any>> => {
+  search: async (search: string): Promise<Array<FuseItem>> => {
     return await ipcRenderer.invoke('pt:search', search);
   },
 });

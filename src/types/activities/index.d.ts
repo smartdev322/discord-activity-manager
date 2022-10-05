@@ -11,10 +11,11 @@ export namespace Activities {
     buttons?: Array<Buttons>;
   }
 
+  /*
   interface ActivityTimestamps {
     start?: number;
     end?: number;
-  }
+  }*/
 
   interface ActivityAssets {
     largeImageKey?: string;

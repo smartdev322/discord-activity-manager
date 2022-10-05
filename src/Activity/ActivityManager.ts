@@ -45,13 +45,15 @@ export class ActivityManager {
       this.activityProcess.on('error', (err: Error) => {
         console.error(err);
       });
+
+      return new Promise((resolve) => {
+        this.activityProcess.on('exit', (code: number) => {
+          resolve(code);
+        }) || resolve(0);
+      });
     }
 
-    return new Promise((resolve) => {
-      this.activityProcess.on('exit', (code: number) => {
-        resolve(code);
-      }) || resolve(0);
-    });
+    return 0;
   }
 
   public async updateActivity(activity: Activities.Activity): Promise<number> {

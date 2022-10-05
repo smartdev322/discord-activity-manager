@@ -8,7 +8,7 @@ interface FuseItem {
 }
 
 export class SearchManager {
-  private fuse: Fuse<any>;
+  private fuse: Fuse<FuseItem>;
   private readonly config = {
     threshold: 0.3,
     ignoreLocation: true,
@@ -20,7 +20,7 @@ export class SearchManager {
     this.fuse = new Fuse(titles, this.config);
   }
 
-  private readFile(path: string): Array<any> {
+  private readFile(path: string): Array<FuseItem> {
     const data = readFileSync(path, { encoding: 'utf-8' });
     return JSON.parse(data) || [];
   }

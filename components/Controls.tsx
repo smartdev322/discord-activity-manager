@@ -7,30 +7,12 @@ import {
   IconEdit,
   IconEraser,
 } from "@tabler/icons";
-import { Dispatch } from "react";
-
-interface ControlProps {
-  vars: ControlVariables;
-  hooks: ControlHooks;
-}
-
-interface ControlVariables {
-  richPresenceEditor: boolean;
-  isBroadcasting: boolean;
-}
-
-interface ControlHooks {
-  broadcast: () => Promise<void>;
-  reset: () => void;
-  resetData: () => void;
-  updateStatus: () => Promise<void>;
-  setRichPresenceEditor: Dispatch<boolean>;
-}
+import { ControlProps } from "../types/Controls";
 
 export default function Control({ vars, hooks }: ControlProps) {
   async function disconnect(): Promise<void> {
     window.activityManager.disconnect();
-    hooks.reset();
+    hooks.resetFlags();
   }
 
   return (

@@ -9,7 +9,6 @@ import {
   IconSearch,*/,
   IconBrandGithub,
 } from "@tabler/icons";
-import "../src/global.d.ts";
 import DarkModeToggle from "../components/DarkMode";
 import StatusBar from "../components/StatusBar";
 import Controls from "../components/Controls";
@@ -33,7 +32,7 @@ function App() {
   const [applicationId, setApplicationId] = useState("");
   const [details, setDetails] = useState("");
   const [state, setState] = useState("");
-  const [startTimestamp, setStartTimestamp] = useState(Date.now());
+  const [startTimestamp, setStartTimestamp] = useState(0);
   const [largeImageKey, setLargeImageKey] = useState("");
   const [largeImageText, setLargeImageText] = useState("");
   const [smallImageKey, setSmallImageKey] = useState("");
@@ -43,19 +42,20 @@ function App() {
   const [button2Label, setButton2Label] = useState("");
   const [button2Url, setButton2Url] = useState("");
 
-  function reset() {
+  function resetFlags() {
     setisBroadcasting(false);
     setProcessFailed(false);
     setDiscordStatus(0);
   }
 
   function resetData() {
-    reset();
+    resetFlags();
 
     setName("");
     setApplicationId("");
     setDetails("");
     setState("");
+    setStartTimestamp(0);
     setLargeImageKey("");
     setLargeImageText("");
     setSmallImageKey("");
@@ -89,14 +89,14 @@ function App() {
       buttons: createButtons(),
     };
 
-    reset();
+    resetFlags();
     setStartTimestamp(startTime);
     setisBroadcasting(true);
 
     setDiscordStatus(await window.activityManager.broadcastStatus(activity));
   }
 
-  async function updateStatus() {
+  async function updateStatus(): Promise<void> {
     if (discordStatus !== 0) {
       setisBroadcasting(false);
       return;
@@ -146,6 +146,7 @@ function App() {
     );
   }
 
+  // Restores user settings, if applicable
   useEffect(() => {
     if (firstLoad.current) {
       firstLoad.current = false;
@@ -201,8 +202,6 @@ function App() {
       // Clears all rich presence fields when the user switches to the simple editor
       setDetails("");
       setState("");
-      //setTimestamp(0);
-      //setTimestampStart(true);
       setLargeImageKey("");
       setLargeImageText("");
       setSmallImageKey("");
@@ -635,7 +634,7 @@ function App() {
           <Controls
             vars={{ richPresenceEditor, isBroadcasting }}
             hooks={{
-              reset,
+              resetFlags,
               resetData,
               setRichPresenceEditor,
               broadcast,
