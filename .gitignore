@@ -7,4 +7,4 @@ node_modules
 # Locally compiled modules
 build
 dist
-out
+app

@@ -7,7 +7,7 @@
     "noImplicitAny": true,
     "resolveJsonModule": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "outDir": "../build",
     "typeRoots": [
       "./types",
@@ -22,12 +22,6 @@
   },
   "include": [
     "./**/*",
-    "./main.ts",
-    "./preload.ts",
-    "./renderer.ts",
-    "./types",
-    "./discord-rpc",
-    "./Activity",
     "./Data/titles.json"
   ]
 }
