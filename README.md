@@ -1,31 +1,34 @@
 # Discord Activity Manager
 
-This is a cross-platform electron application that allows users easily modify their Discord game activity through the Discord Rich Presence API. 
+The Discord Activity Manager is an easy-to-use, cross-platform application that allows users to easily share their Discord game activity through the Discord Rich Presence API (via Discord.js/Discord-RPC).
 
 # Features
 ## Key Features
 * Easily make changes to your activity status, even while the activity is being broadcasted
-* Quickly search through the saved list of activities
+* Quickly swap between the standard game and rich presence statuses
+* Search through a locally saved list of activities
 
 ## In Progress
-* Saving and modifying activities
+* Saving and modifying the list of user-generated activites for easy access
 * Localization support
 
 # Technology Stack
+This program was written in Typescript and runs off an Electron/Node backend with a static React frontend from Next.js.
+
 ### Backend
-* Discord RPC (Discord.js)
 * Electron/Node
-* Fuse (Fuzzy Searches)
 * TypeScript
+* Discord RPC (Discord.js)
+* Fuse (Fuzzy Searches)
 ### Frontend
 * React/Next
 * Tailwindcss
+* Prettier
 
 # Accessing the Source Code
 ## Prerequisites
-You will need to have Node.js installed prior to continuing.
-
-Download the source code and install the required packages by entering `npm install` into your terminal of choice.
+You will need to have Node.js installed and access to a terminal prior to continuing.
+You can install the required packages by entering `npm install` into the terminal.
 
 ## Available Commands
 `npm run dev`
@@ -38,4 +41,4 @@ Download the source code and install the required packages by entering `npm inst
 > Bundles the code into a distributable executive bundle. Currently only supports Windows and requires some kind of cleanup prior to distribution.
 
 # Disclaimers
-The user is still bound by any applicable Discord Terms of Service agreements while using this software. Please be considerate in what gets entered into the fields prior to sharing your status with the community. The author and contributors will not be liable for any disciplinary actions applied as a result of misuse of this software.
+The user is still bound by any applicable Discord Terms of Service agreements while using this program. Please be considerate in what gets entered into the fields prior to sharing your status with the community. The author and contributors will not be liable for any disciplinary actions applied as a result of misuse of this software.
