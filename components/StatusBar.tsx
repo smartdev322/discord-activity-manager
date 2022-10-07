@@ -42,7 +42,7 @@ export default function StatusBar({ props }: componentProps): JSX.Element {
   }
 
   return (
-    <div className="discordTextActive statusbar w-full overflow-hidden bg-light-200 dark:bg-dark-800">
+    <div className="discordTextActive statusbar z-10 w-full overflow-hidden bg-light-200 dark:bg-dark-800">
       <span className="truncate">
         {props.name
           ? `${props.name}`

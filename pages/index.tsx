@@ -122,7 +122,7 @@ function App() {
       <div
         className={`${
           isSearching ? "absolute" : "hidden"
-        } inset-x-4 top-16 z-20 space-y-1 overflow-y-auto bg-white dark:bg-dark-600`}
+        } inset-x-4 top-16 z-[1] space-y-1 overflow-y-auto bg-white dark:bg-dark-600`}
       >
         {searchResults
           .slice(0, 10)
@@ -447,7 +447,11 @@ function App() {
                 </div>
               </div>
 
-              <div className="flex flex-row space-x-2">
+              <div
+                className={`${
+                  largeImageKey ? "visible" : "hidden"
+                } flex flex-row space-x-2`}
+              >
                 <div className="flex w-1/2 flex-col">
                   <label
                     htmlFor="smallImageKey"

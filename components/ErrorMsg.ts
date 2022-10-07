@@ -7,8 +7,7 @@ export default function ErrorMsg(code: number): string {
   const message: ErrorCodeTable = {
     100: 'Discord Error',
     101: 'Process already active',
-    102: '',
-    103: 'Missing data',
+    103: 'Missing Application ID',
     105: 'Rate limit',
     1000: 'Discord is not open',
     4000: 'Invalid application ID',
